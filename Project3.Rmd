@@ -1,5 +1,5 @@
 ---
-title: "P3"
+title: "Project3"
 author: "Ruben Sowah"
 date: "2022-10-30"
 output: 
@@ -19,3 +19,41 @@ rmarkdown::render("project3.Rmd",
                   output_options = list(
                   html_preview = FALSE, toc = TRUE, toc_depth = 2, toc_float = TRUE))
 ```
+# Introduction
+
+# Load packages
+```{r}
+library(tidyverse)
+library(caret)
+library(Metrics)
+library(ggplot2)
+library(readr)
+
+```
+
+# Read in the data
+
+```{r}
+## Read and get an overview of the data
+data <- read_csv("OnlineNewsPopularity.csv")
+head(data)
+
+## Subset the data by the entertainment channel, and select our desired features
+data <- data %>% 
+        filter(data_channel_is_entertainment == 1) %>%
+        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
+
+## Coerce the categorical variables into factor
+data$weekday_is_saturday <- as.factor(data$weekday_is_saturday)
+data$is_weekend <- as.factor(data$is_weekend)
+
+
+print(data, width = 100, n = 10)
+levels(data$weekday_is_saturday)       
+```
+
+# Summarizations
+```{r}
+
+```
+
