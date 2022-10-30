@@ -1,0 +1,21 @@
+---
+title: "P3"
+author: "Ruben Sowah"
+date: "2022-10-30"
+output: 
+  github_document :
+    toc: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE,message  = F, warning = F, cache = T)
+```
+
+
+```{r, echo = F, eval = F}
+rmarkdown::render("project3.Rmd",
+                  output_format = "github_document",
+                  output_file = "README.md",
+                  output_options = list(
+                  html_preview = FALSE, toc = TRUE, toc_depth = 2, toc_float = TRUE))
+```
