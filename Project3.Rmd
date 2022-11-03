@@ -44,7 +44,7 @@ data <- data %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 ## Coerce the categorical variables into factor
-data$weekday_is_saturday <- as.factor(data$weekday_is_saturday)
+#data$weekday_is_saturday <- factor(data$weekday_is_saturday)
 data$is_weekend <- as.factor(data$is_weekend)
 
 
