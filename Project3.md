@@ -1,15 +1,56 @@
 Project3
 ================
-Ruben Sowah
+Ruben Sowah and Zhiyuan Yang
 2022-10-30
 
 -   <a href="#introduction" id="toc-introduction">Introduction</a>
 -   <a href="#load-packages" id="toc-load-packages">Load packages</a>
 -   <a href="#read-in-the-data" id="toc-read-in-the-data">Read in the
     data</a>
--   <a href="#summarizations" id="toc-summarizations">Summarizations</a>
+-   <a href="#first-group-members-summarizations"
+    id="toc-first-group-members-summarizations">First group member’s
+    summarizations</a>
+-   <a href="#first-group-members-modeling"
+    id="toc-first-group-members-modeling">First group member’s modeling</a>
+-   <a href="#second-group-members-summarizations"
+    id="toc-second-group-members-summarizations">Second group member’s
+    summarizations</a>
+-   <a href="#second-group-members-modeling"
+    id="toc-second-group-members-modeling">Second group member’s
+    modeling</a>
+-   <a href="#comparison-of-the-four-models"
+    id="toc-comparison-of-the-four-models">Comparison of the four models</a>
+-   <a href="#automation" id="toc-automation">Automation</a>
+-   <a href="#conclusion" id="toc-conclusion">Conclusion</a>
 
 # Introduction
+
+The dataset that we used is called Online News Popularity Data set. This
+dataset concluded multiple features of articles published by Mashable in
+past years. Our goal is to use different predictive models to predict
+the number of shares in social networks. Our target variable is the
+number of shares. The variable name of our target variable is called
+shares. Thus, shares will be our dependent variable in our predictive
+models. After our discussion, we both think the rate of unique words in
+the content, the number of links, the number of images, the number of
+videos, whether the article was published on the weekend, the rate of
+positive words in the content, the rate of negative words in the
+content, the average polarity of positive words, the average polarity of
+negative words, whether the article published on Monday or on a Saturday
+will affect the number of shares for article. Thus, we selected \*\*
+n_tokens_content, num_hrefs, num_imgs, num_videos, is_weekend,
+global_rate_positive_words, global_rate_negative_words,
+avg_positive_polarity, avg_negative_polarity, weekday_is_monday,
+weekday_is_saturday \*\* as our independent variables.
+
+This dataset has six different channels, which are a lifestyle channel,
+an entertainment channel, a bus channel, a social media channel, a tech
+channel, and a world channel. We will subset the dataset based on
+different channel types before we create our predictive models.
+
+We will fit a random forest model and fit a boosted tree model. Both
+models will be chosen using cross-validation. We will describe those in
+more detail later.
 
 # Load packages
 
@@ -19,6 +60,9 @@ library(caret)
 library(Metrics)
 library(ggplot2)
 library(readr)
+library(corrplot)
+library(knitr)
+library(rsample)
 ```
 
 # Read in the data
@@ -50,48 +94,314 @@ head(data)
 ## Subset the data by the entertainment channel, and select our desired features
 data <- data %>% 
         filter(data_channel_is_entertainment == 1) %>%
-        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
+        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
+
 
 ## Coerce the categorical variables into factor
-data$weekday_is_saturday <- as.factor(data$weekday_is_saturday)
-data$is_weekend <- as.factor(data$is_weekend)
+data$weekday_is_monday <- factor(data$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
 
+data$weekday_is_saturday <- factor(data$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
 
+data$is_weekend <- factor(data$is_weekend, levels = c(0,1), labels = c('Not a weekend', 'Weekend'))
+
+## View data
 print(data, width = 100, n = 10)
 ```
 
-    ## # A tibble: 7,057 x 11
-    ##    n_tokens_content num_hrefs num_imgs num_videos weekday_is_saturday is_weekend
-    ##               <dbl>     <dbl>    <dbl>      <dbl> <fct>               <fct>     
-    ##  1              219         4        1          0 0                   0         
-    ##  2              531         9        1          0 0                   0         
-    ##  3              194         4        0          1 0                   0         
-    ##  4              161         5        0          6 0                   0         
-    ##  5              454         5        1          0 0                   0         
-    ##  6              177         4        1          0 0                   0         
-    ##  7              356         3       12          1 0                   0         
-    ##  8              281         5        1          0 0                   0         
-    ##  9              909         3        1          1 0                   0         
-    ## 10              413         6       13          0 0                   0         
-    ##    global_rate_positive_words global_rate_negative_words avg_po~1 avg_n~2 shares
-    ##                         <dbl>                      <dbl>    <dbl>   <dbl>  <dbl>
-    ##  1                     0.0457                     0.0137    0.379  -0.35     593
-    ##  2                     0.0414                     0.0207    0.386  -0.370   1200
-    ##  3                     0.0567                     0         0.545   0       2100
-    ##  4                     0.0497                     0.0186    0.427  -0.364   1200
-    ##  5                     0.0441                     0.0132    0.363  -0.215   4600
-    ##  6                     0.0678                     0.0113    0.417  -0.167   1200
-    ##  7                     0.0618                     0.0140    0.359  -0.373    631
-    ##  8                     0.0463                     0.0214    0.322  -0.278   1300
-    ##  9                     0.0649                     0.0220    0.381  -0.258   1700
-    ## 10                     0.0412                     0.0121    0.345  -0.408    455
-    ## # ... with 7,047 more rows, and abbreviated variable names 1: avg_positive_polarity,
-    ## #   2: avg_negative_polarity
+    ## # A tibble: 7,057 x 12
+    ##    n_tokens_content num_hrefs num_imgs num_videos weekday_is_monday
+    ##               <dbl>     <dbl>    <dbl>      <dbl> <fct>            
+    ##  1              219         4        1          0 It is Monday     
+    ##  2              531         9        1          0 It is Monday     
+    ##  3              194         4        0          1 It is Monday     
+    ##  4              161         5        0          6 It is Monday     
+    ##  5              454         5        1          0 It is Monday     
+    ##  6              177         4        1          0 It is Monday     
+    ##  7              356         3       12          1 It is Monday     
+    ##  8              281         5        1          0 Not Monday       
+    ##  9              909         3        1          1 Not Monday       
+    ## 10              413         6       13          0 Not Monday       
+    ##    weekday_is_saturday is_weekend    global_rat~1 globa~2 avg_p~3 avg_n~4 shares
+    ##    <fct>               <fct>                <dbl>   <dbl>   <dbl>   <dbl>  <dbl>
+    ##  1 Not Saturday        Not a weekend       0.0457  0.0137   0.379  -0.35     593
+    ##  2 Not Saturday        Not a weekend       0.0414  0.0207   0.386  -0.370   1200
+    ##  3 Not Saturday        Not a weekend       0.0567  0        0.545   0       2100
+    ##  4 Not Saturday        Not a weekend       0.0497  0.0186   0.427  -0.364   1200
+    ##  5 Not Saturday        Not a weekend       0.0441  0.0132   0.363  -0.215   4600
+    ##  6 Not Saturday        Not a weekend       0.0678  0.0113   0.417  -0.167   1200
+    ##  7 Not Saturday        Not a weekend       0.0618  0.0140   0.359  -0.373    631
+    ##  8 Not Saturday        Not a weekend       0.0463  0.0214   0.322  -0.278   1300
+    ##  9 Not Saturday        Not a weekend       0.0649  0.0220   0.381  -0.258   1700
+    ## 10 Not Saturday        Not a weekend       0.0412  0.0121   0.345  -0.408    455
+    ## # ... with 7,047 more rows, and abbreviated variable names 1: global_rate_positive_words,
+    ## #   2: global_rate_negative_words, 3: avg_positive_polarity, 4: avg_negative_polarity
+
+# First group member’s summarizations
+
+<br>
+
+#### <u>1) Numerical summaries</u>
+
+Here I will get some numerical summaries like the mean, the standard
+deviation , the variance of some of the quantitative variables as well
+as get the count of the categorical variables.
 
 ``` r
-levels(data$weekday_is_saturday)       
+## Get the numerical summaries of some numeric features
+num.summary <- data %>%
+          summarize(tokens.avg = mean(n_tokens_content), image.avg = mean(num_imgs), vids.avg = mean(num_videos), pos.words.dev = sd(global_rate_positive_words), links.var = var(num_hrefs))
+
+num.summary
 ```
 
-    ## [1] "0" "1"
+    ## # A tibble: 1 x 5
+    ##   tokens.avg image.avg vids.avg pos.words.dev links.var
+    ##        <dbl>     <dbl>    <dbl>         <dbl>     <dbl>
+    ## 1       607.      6.32     2.55        0.0169      167.
 
-# Summarizations
+``` r
+## Get contingency tables of the categorical features
+
+# Count of the articles published and not on Monday
+table(data$weekday_is_monday)
+```
+
+    ## 
+    ##   Not Monday It is Monday 
+    ##         5699         1358
+
+``` r
+# Two ways table of articles published on weekend and on Saturday or neither.
+table(data$is_weekend, data$weekday_is_saturday)
+```
+
+    ##                
+    ##                 Not Saturday It is Saturday
+    ##   Not a weekend         6141              0
+    ##   Weekend                536            380
+
+-   From the numerical summaries, the results show that there is an
+    average of 607 words in the content, an average of 6 images and 3
+    videos. The standard deviation of the positive words from the mean
+    is 0.0169 and the number of links varies by a average amount of 167.
+
+-   The one way contingency table tells us that the number of articles
+    published on Monday is less compared to the number of articles that
+    is not published on Monday, 1358 versus 5699.
+
+-   From the two ways contingency tables, 536 articles are published
+    during the weekend, but it is not on Saturday. The amount of
+    articles published on Saturday is 380. A total number of 6141
+    articles are not published during the weekend.
+
+#### <u>2) Graphs</u>
+
+-   **Scatter plot of the rate of positive words in the content and the
+    number of shares**
+
+``` r
+g <- ggplot(data, aes(x = global_rate_positive_words, y = shares))
+g + geom_point(color = 'blue')+
+  labs(title = 'Rate of positive words vs Number of shares')
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+
+A scatter plot is used to visualize the relation between two numeric
+variables. A strong positive relationship between the rate of positive
+words and the number of shares will show a linear upward trend with the
+data points closed to each other. This means that the number of shares
+grows as the number of positive words increases.
+
+A negative relationship between the two variables is shown by a downward
+trend that tells us that people share less contents that have lots of
+positive words.
+
+-   **Density plot**
+
+``` r
+g <- ggplot(data, aes(x = global_rate_negative_words)) 
+g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
+  labs(title = 'Density plot  of the rate of negative words in the article')
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+
+A density plot can tell us about the distribution of a certain feature
+or the whole data. Here, we plot the density of the rate of negative
+words. A right skewed plot is an indication that there are quite more
+negative words in the article. A left skewed plot indicates that there
+are not much of negative words in the article. A symmetric plot tells us
+that the amount of negative words in the article is normally
+distributed, about average.
+
+<br>
+
+-   **Dotplot**
+
+``` r
+g <- ggplot(data, aes(x = is_weekend, y = shares)) 
+g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize = 1.2)+
+  labs(title = 'Dotplot of the number of articles shared vs the week of the day')
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+
+-   Similarly to a boxplot, dotplots can be used to visualize the five
+    number summary of a numeric data. Here , we are trying to see
+    graphically the number of contents shared during the weekday and the
+    weekend. We would expect the minimum number to be 0, since a the
+    least amount of contents that can be shared can’t go below 0.
+
+-   A greater number of points, for example in the ‘Not weekend’ group
+    states that more articles are shared during the week days compared
+    the weekend. The opposite would mean that contents are shared more
+    during the weekend.
+
+-   Points that are far away from the rest indicates possible outliers.
+
+# First group member’s modeling
+
+Here the data will be split into two, a training set and a testing set.
+Two different models will be fit on the training set , then later be
+evaluated on the test set. The two models that will be fit are a
+**linear regression model** and a **random forest model**, using
+cross-validation.
+
+-   **What is linear regression about ?**
+
+Linear regression (LR) is the simplest form of a supervised machine
+learning, where the data has both a single (simple linear regression) or
+numerous predictors variables (multiple linear regression) denoted X’s
+and an outcome or response variable denoted Y, that is quantitative.
+Linear regression is used for either predicting the response variable or
+to understand the relationship between the response and the predictors.
+In the former case, we talk about prediction and in the latter, we talk
+about inference.
+
+Though a very simple approach , LR is widely used in practice and lots
+of advanced models are a generalization of LR. With LR, one can seek to
+understand if there is a relation between the response and the
+predictors, and how strong that relationship is. Which predictors are
+associated with the response, how accurately can one predicts the
+response, is the relationship linear or non-linear, are the predictors
+correlated? Those are some important questions one can answers with the
+use of linear regression.
+
+-   **What is random forest about ?**
+
+Random forest (RF) is supervised statistical machine learning algorithm
+, constructed from decision trees, that is used in regression and
+classification problems. RF is part of a general learning method called
+*ensemble learning*. The idea of ensemble learning is to build a
+prediction model by combining the strengths of a collection of simpler
+base models, or in layman terms, an ensemble learning simply means
+combining multiple models.
+
+RF builds decision trees on different samples and takes their majority
+vote for classification and average for regression. It is an extension
+of another ensemble learning method called *Bagging or Bootstrap
+Aggregation*. Bagging chooses a random sample from the data, and
+generates different models from those samples called Bootstrap samples,
+the sample is usually done with replacement.
+
+Rf is an extension of Bagging in the sense that RF doesn’t use all the
+predictors unlike Bagging. It uses a random subset of predictors for
+each bootstrap sample, and the final output is based on the average or
+majority ranking, in this way the problem of overfitting is also
+avoided.
+
+**a) Fit a linear regression model**
+
+``` r
+set.seed(12)
+
+## Using the rsample package, create a training an test set (70/30)
+index <- initial_split(data, prop = 0.7)
+train.set <- training(index)
+test.set <- testing(index)
+
+## Check the dimensions of the sets
+dim(train.set)
+```
+
+    ## [1] 4939   12
+
+``` r
+dim(test.set)
+```
+
+    ## [1] 2118   12
+
+# Second group member’s summarizations
+
+``` r
+# Create contingency table of whether the article was published on the weekend
+table(data$is_weekend)
+```
+
+    ## 
+    ## Not a weekend       Weekend 
+    ##          6141           916
+
+***Comments:*** Based on the contingency table, we can see how many
+articles are published on weekend. 0 means articles are not published on
+weekend. 1 means articles are published on weekend.
+
+``` r
+# Create contingency table of whether the article was published on the Saturday
+table(data$weekday_is_saturday)
+```
+
+    ## 
+    ##   Not Saturday It is Saturday 
+    ##           6677            380
+
+***Comments:*** Based on the contingency table, we can see how many
+articles are published on Saturday. 0 means articles are not published
+on Saturday. 1 means articles are published on Saturday.
+
+``` r
+# Create bar plot to see whether the article was published on the Saturday
+
+ggplot(data, aes(x=weekday_is_saturday))+
+  geom_bar(aes(fill = "drv")) + 
+  labs(y="Number of the Articles Were Published on the Saturday", 
+       title= "Weekend published article's Bar plot")
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+***Comments:*** Based on the bar plot, we can see how many articles are
+published on Saturday.
+
+``` r
+# Create histogram to see number of shares and whether the article was published on the Weekend
+
+ggplot(data = data, aes(x = shares))+ 
+  geom_histogram(bins = 20, aes(fill = is_weekend)) +
+  labs(x = "Number of Shares",
+       y="Number of the Articles Were Published on the Weekend", 
+       title = "Histogram of Shares that are Related to Weekend") +
+       scale_fill_discrete(name = "Whether Weekend Published", 
+                           labels = c("No", "Yes"))
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+***Comments:*** Based on this histogram, we can see the distribution of
+the number of shares. If the peak of the graph lies to the left side of
+the center, it means that most of articles have small number of shares.
+If the peak of the graph lies to the right side of the center, it means
+that most of articles have large number of shares. If we see a bell
+shape, it means that the number of articles have large number of shares
+is similar with the number of articles have small number of shares. The
+No means the articles were published on weekend. The Yes means the
+articles were published on weekend.
+
+# Second group member’s modeling
+
+# Comparison of the four models
+
+# Automation
+
+# Conclusion

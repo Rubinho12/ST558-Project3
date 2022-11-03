@@ -10,3 +10,6 @@ forcats
 lattice
 caret
 Metrics
+corrplot
+knitr
+rsample
