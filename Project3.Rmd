@@ -44,24 +44,24 @@ library(rsample)
 
 ```{r}
 ## Read and get an overview of the data
-data <- read_csv("OnlineNewsPopularity.csv")
-head(data)
+newsdata <- read_csv("OnlineNewsPopularity.csv")
+head(newsdata)
 
 ## Subset the data by the entertainment channel, and select our desired features
-data <- data %>% 
+newsdata <- newsdata %>% 
         filter(data_channel_is_entertainment == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
 ## Coerce the categorical variables into factor
-data$weekday_is_monday <- factor(data$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
+newsdata$weekday_is_monday <- factor(newsdata$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
 
-data$weekday_is_saturday <- factor(data$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
+newsdata$weekday_is_saturday <- factor(newsdata$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
 
-data$is_weekend <- factor(data$is_weekend, levels = c(0,1), labels = c('Not a weekend', 'Weekend'))
+newsdata$is_weekend <- factor(newsdata$is_weekend, levels = c(0,1), labels = c('Not a weekend', 'Weekend'))
 
 ## View data
-print(data, width = 100, n = 10)
+print(newsdata, width = 100, n = 10)
 ```
 
 # First group member's summarizations
@@ -74,7 +74,7 @@ print(data, width = 100, n = 10)
   
 ```{r}
 ## Get the numerical summaries of some numeric features
-num.summary <- data %>%
+num.summary <- newsdata %>%
           summarize(tokens.avg = mean(n_tokens_content), image.avg = mean(num_imgs), vids.avg = mean(num_videos), pos.words.dev = sd(global_rate_positive_words), links.var = var(num_hrefs))
 
 num.summary
@@ -82,10 +82,10 @@ num.summary
 ## Get contingency tables of the categorical features
 
 # Count of the articles published and not on Monday
-table(data$weekday_is_monday)
+table(newsdata$weekday_is_monday)
 
 # Two ways table of articles published on weekend and on Saturday or neither.
-table(data$is_weekend, data$weekday_is_saturday)
+table(newsdata$is_weekend, newsdata$weekday_is_saturday)
 ```
 
   * From the numerical summaries, the results show that there is an average of 607 words in the content, an average of 6 images and 3 videos. The standard deviation of the positive words from the mean is 0.0169 and the number of links varies by a average amount of 167.  
@@ -99,7 +99,7 @@ table(data$is_weekend, data$weekday_is_saturday)
 
  * __Scatter plot of the rate of positive words in the content and the number of shares__
 ```{r}
-g <- ggplot(data, aes(x = global_rate_positive_words, y = shares))
+g <- ggplot(newsdata, aes(x = global_rate_positive_words, y = shares))
 g + geom_point(color = 'blue')+
   labs(title = 'Rate of positive words vs Number of shares')
 ```
@@ -110,7 +110,7 @@ g + geom_point(color = 'blue')+
   
  * __Density plot__
 ```{r}
-g <- ggplot(data, aes(x = global_rate_negative_words)) 
+g <- ggplot(newsdata, aes(x = global_rate_negative_words)) 
 g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
   labs(title = 'Density plot  of the rate of negative words in the article')
 ```
@@ -121,7 +121,7 @@ g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
 
   * __Dotplot__
 ```{r}
-g <- ggplot(data, aes(x = is_weekend, y = shares)) 
+g <- ggplot(newsdata, aes(x = is_weekend, y = shares)) 
 g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize = 1.2)+
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
@@ -153,26 +153,52 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
    Rf is an extension of Bagging in the sense that RF doesn't use all the predictors unlike Bagging. It uses a random subset of predictors for each bootstrap sample, and the final output is based on the average or majority  ranking, in this way the problem of overfitting is also avoided.  
   
   
-  __a) Fit a linear regression model__
+#### [__1) Fit a linear regression model__]{.underline}
   
+  The data now will be split into a train and test sets, and a linear regression model will be fit on the train set. The train set will be 70 percent of the whole data and the remaining 30 % will be the test set.  
 ```{r}
 set.seed(12)
 
 ## Using the rsample package, create a training an test set (70/30)
-index <- initial_split(data, prop = 0.7)
+index <- initial_split(newsdata, prop = 0.7)
 train.set <- training(index)
 test.set <- testing(index)
 
 ## Check the dimensions of the sets
 dim(train.set)
 dim(test.set)
+
+## Fit a linear regression model
+regmod <- lm(shares ~. , data = train.set)
+summary(regmod)
 ```
 
-  
+
+#### [__2) Fit a random forest model__]{.underline} 
+
+  Here a random forest model will be fit on the train set using a cross-validation with 5 folds. We will use the expand.grid() function to select a range of parameters that will be tuned in our model. The optimal parameter that minimizes th error will be chosen and the model will be refit on the train set using that optimal parameter. We will also center and scale the train data for a more accurate distribution of the variables.  
+```{r, eval = F}
+## Create a grid of tuning parameters
+forestgrid <- expand.grid(mtry = c(1:15))
+
+## Fit the random forest model
+forestmod <- train(shares ~ . ,
+                   data = train.set,
+                   method = 'rf',
+                   trControl = trainControl(method = 'cv', number = 5),
+                   preProcess = c('center','scale'),
+                   tuneGrid = forestgrid)
+#forestmod
+```
+
+
+
+
+
 # Second group member's summarizations
 ```{r}
 # Create contingency table of whether the article was published on the weekend
-table(data$is_weekend)
+table(newsdata$is_weekend)
 ```
 ***Comments:***
 Based on the contingency table, we can see how many articles are published on weekend.
@@ -180,7 +206,7 @@ Based on the contingency table, we can see how many articles are published on we
 
 ```{r}
 # Create contingency table of whether the article was published on the Saturday
-table(data$weekday_is_saturday)
+table(newsdata$weekday_is_saturday)
 ```
 
 ***Comments:***
@@ -190,7 +216,7 @@ Based on the contingency table, we can see how many articles are published on Sa
 ```{r}
 # Create bar plot to see whether the article was published on the Saturday
 
-ggplot(data, aes(x=weekday_is_saturday))+
+ggplot(newsdata, aes(x=weekday_is_saturday))+
   geom_bar(aes(fill = "drv")) + 
   labs(y="Number of the Articles Were Published on the Saturday", 
        title= "Weekend published article's Bar plot")
@@ -203,7 +229,7 @@ Based on the bar plot, we can see how many articles are published on Saturday.
 ```{r}
 # Create histogram to see number of shares and whether the article was published on the Weekend
 
-ggplot(data = data, aes(x = shares))+ 
+ggplot(data = newsdata, aes(x = shares))+ 
   geom_histogram(bins = 20, aes(fill = is_weekend)) +
   labs(x = "Number of Shares",
        y="Number of the Articles Were Published on the Weekend", 

@@ -69,8 +69,8 @@ library(rsample)
 
 ``` r
 ## Read and get an overview of the data
-data <- read_csv("OnlineNewsPopularity.csv")
-head(data)
+newsdata <- read_csv("OnlineNewsPopularity.csv")
+head(newsdata)
 ```
 
     ## # A tibble: 6 x 61
@@ -92,20 +92,20 @@ head(data)
 
 ``` r
 ## Subset the data by the entertainment channel, and select our desired features
-data <- data %>% 
+newsdata <- newsdata %>% 
         filter(data_channel_is_entertainment == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
 ## Coerce the categorical variables into factor
-data$weekday_is_monday <- factor(data$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
+newsdata$weekday_is_monday <- factor(newsdata$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
 
-data$weekday_is_saturday <- factor(data$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
+newsdata$weekday_is_saturday <- factor(newsdata$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
 
-data$is_weekend <- factor(data$is_weekend, levels = c(0,1), labels = c('Not a weekend', 'Weekend'))
+newsdata$is_weekend <- factor(newsdata$is_weekend, levels = c(0,1), labels = c('Not a weekend', 'Weekend'))
 
 ## View data
-print(data, width = 100, n = 10)
+print(newsdata, width = 100, n = 10)
 ```
 
     ## # A tibble: 7,057 x 12
@@ -148,7 +148,7 @@ as get the count of the categorical variables.
 
 ``` r
 ## Get the numerical summaries of some numeric features
-num.summary <- data %>%
+num.summary <- newsdata %>%
           summarize(tokens.avg = mean(n_tokens_content), image.avg = mean(num_imgs), vids.avg = mean(num_videos), pos.words.dev = sd(global_rate_positive_words), links.var = var(num_hrefs))
 
 num.summary
@@ -163,7 +163,7 @@ num.summary
 ## Get contingency tables of the categorical features
 
 # Count of the articles published and not on Monday
-table(data$weekday_is_monday)
+table(newsdata$weekday_is_monday)
 ```
 
     ## 
@@ -172,7 +172,7 @@ table(data$weekday_is_monday)
 
 ``` r
 # Two ways table of articles published on weekend and on Saturday or neither.
-table(data$is_weekend, data$weekday_is_saturday)
+table(newsdata$is_weekend, newsdata$weekday_is_saturday)
 ```
 
     ##                
@@ -200,7 +200,7 @@ table(data$is_weekend, data$weekday_is_saturday)
     number of shares**
 
 ``` r
-g <- ggplot(data, aes(x = global_rate_positive_words, y = shares))
+g <- ggplot(newsdata, aes(x = global_rate_positive_words, y = shares))
 g + geom_point(color = 'blue')+
   labs(title = 'Rate of positive words vs Number of shares')
 ```
@@ -220,7 +220,7 @@ positive words.
 -   **Density plot**
 
 ``` r
-g <- ggplot(data, aes(x = global_rate_negative_words)) 
+g <- ggplot(newsdata, aes(x = global_rate_negative_words)) 
 g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
   labs(title = 'Density plot  of the rate of negative words in the article')
 ```
@@ -240,7 +240,7 @@ distributed, about average.
 -   **Dotplot**
 
 ``` r
-g <- ggplot(data, aes(x = is_weekend, y = shares)) 
+g <- ggplot(newsdata, aes(x = is_weekend, y = shares)) 
 g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize = 1.2)+
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
@@ -311,13 +311,17 @@ each bootstrap sample, and the final output is based on the average or
 majority ranking, in this way the problem of overfitting is also
 avoided.
 
-**a) Fit a linear regression model**
+#### <u>**1) Fit a linear regression model**</u>
+
+The data now will be split into a train and test sets, and a linear
+regression model will be fit on the train set. The train set will be 70
+percent of the whole data and the remaining 30 % will be the test set.
 
 ``` r
 set.seed(12)
 
 ## Using the rsample package, create a training an test set (70/30)
-index <- initial_split(data, prop = 0.7)
+index <- initial_split(newsdata, prop = 0.7)
 train.set <- training(index)
 test.set <- testing(index)
 
@@ -333,11 +337,70 @@ dim(test.set)
 
     ## [1] 2118   12
 
+``` r
+## Fit a linear regression model
+regmod <- lm(shares ~. , data = train.set)
+summary(regmod)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = shares ~ ., data = train.set)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ##  -4650  -2135  -1672   -844 207803 
+    ## 
+    ## Coefficients:
+    ##                                     Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)                        2.163e+03  4.583e+02   4.719 2.44e-06 ***
+    ## n_tokens_content                  -6.383e-02  2.620e-01  -0.244  0.80748    
+    ## num_hrefs                          1.470e+01  9.752e+00   1.507  0.13182    
+    ## num_imgs                           1.316e+01  1.122e+01   1.173  0.24076    
+    ## num_videos                         1.204e+01  1.965e+01   0.613  0.54023    
+    ## weekday_is_mondayIt is Monday      1.595e+02  2.883e+02   0.553  0.58001    
+    ## weekday_is_saturdayIt is Saturday -4.801e+02  6.178e+02  -0.777  0.43712    
+    ## is_weekendWeekend                  1.251e+03  4.234e+02   2.954  0.00315 ** 
+    ## global_rate_positive_words        -8.560e+03  7.215e+03  -1.186  0.23551    
+    ## global_rate_negative_words        -9.847e+03  9.912e+03  -0.994  0.32051    
+    ## avg_positive_polarity              1.985e+03  1.156e+03   1.717  0.08598 .  
+    ## avg_negative_polarity             -8.386e+02  9.667e+02  -0.867  0.38576    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 7793 on 4927 degrees of freedom
+    ## Multiple R-squared:  0.004994,   Adjusted R-squared:  0.002773 
+    ## F-statistic: 2.248 on 11 and 4927 DF,  p-value: 0.01011
+
+#### <u>**2) Fit a random forest model**</u>
+
+Here a random forest model will be fit on the train set using a
+cross-validation with 5 folds. We will use the expand.grid() function to
+select a range of parameters that will be tuned in our model. The
+optimal parameter that minimizes th error will be chosen and the model
+will be refit on the train set using that optimal parameter. We will
+also center and scale the train data for a more accurate distribution of
+the variables.
+
+``` r
+## Create a grid of tuning parameters
+forestgrid <- expand.grid(mtry = c(1:15))
+
+## Fit the random forest model
+forestmod <- train(shares ~ . ,
+                   data = train.set,
+                   method = 'rf',
+                   trControl = trainControl(method = 'cv', number = 5),
+                   preProcess = c('center','scale'),
+                   tuneGrid = forestgrid)
+#forestmod
+```
+
 # Second group member’s summarizations
 
 ``` r
 # Create contingency table of whether the article was published on the weekend
-table(data$is_weekend)
+table(newsdata$is_weekend)
 ```
 
     ## 
@@ -350,7 +413,7 @@ weekend. 1 means articles are published on weekend.
 
 ``` r
 # Create contingency table of whether the article was published on the Saturday
-table(data$weekday_is_saturday)
+table(newsdata$weekday_is_saturday)
 ```
 
     ## 
@@ -364,20 +427,20 @@ on Saturday. 1 means articles are published on Saturday.
 ``` r
 # Create bar plot to see whether the article was published on the Saturday
 
-ggplot(data, aes(x=weekday_is_saturday))+
+ggplot(newsdata, aes(x=weekday_is_saturday))+
   geom_bar(aes(fill = "drv")) + 
   labs(y="Number of the Articles Were Published on the Saturday", 
        title= "Weekend published article's Bar plot")
 ```
 
-![](Project3_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](Project3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 ***Comments:*** Based on the bar plot, we can see how many articles are
 published on Saturday.
 
 ``` r
 # Create histogram to see number of shares and whether the article was published on the Weekend
 
-ggplot(data = data, aes(x = shares))+ 
+ggplot(data = newsdata, aes(x = shares))+ 
   geom_histogram(bins = 20, aes(fill = is_weekend)) +
   labs(x = "Number of Shares",
        y="Number of the Articles Were Published on the Weekend", 
@@ -386,7 +449,7 @@ ggplot(data = data, aes(x = shares))+
                            labels = c("No", "Yes"))
 ```
 
-![](Project3_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](Project3_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ***Comments:*** Based on this histogram, we can see the distribution of
 the number of shares. If the peak of the graph lies to the left side of
