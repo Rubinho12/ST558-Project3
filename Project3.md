@@ -63,6 +63,7 @@ library(readr)
 library(corrplot)
 library(knitr)
 library(rsample)
+library(randomForest)
 ```
 
 # Read in the data
@@ -372,6 +373,29 @@ summary(regmod)
     ## Multiple R-squared:  0.004994,   Adjusted R-squared:  0.002773 
     ## F-statistic: 2.248 on 11 and 4927 DF,  p-value: 0.01011
 
+``` r
+train.set
+```
+
+    ## # A tibble: 4,939 x 12
+    ##    n_tokens_co~1 num_h~2 num_i~3 num_v~4 weekd~5 weekd~6 is_we~7 globa~8 globa~9
+    ##            <dbl>   <dbl>   <dbl>   <dbl> <fct>   <fct>   <fct>     <dbl>   <dbl>
+    ##  1           643       6       1       0 Not Mo~ Not Sa~ Not a ~  0.0544 0.0358 
+    ##  2           465       2       2       1 Not Mo~ Not Sa~ Not a ~  0.0366 0.0323 
+    ##  3          1295      50       8       2 Not Mo~ Not Sa~ Not a ~  0.0548 0.0139 
+    ##  4           685      20       1       0 Not Mo~ Not Sa~ Not a ~  0.0263 0.0102 
+    ##  5           980       5       0      27 Not Mo~ Not Sa~ Not a ~  0.0571 0.0582 
+    ##  6           639      21       1       0 Not Mo~ It is ~ Weekend  0.0313 0.00939
+    ##  7           749      25      11       2 Not Mo~ It is ~ Weekend  0.0374 0.00534
+    ##  8           152       4       0       1 It is ~ Not Sa~ Not a ~  0.0724 0.0132 
+    ##  9           424      22       0      12 Not Mo~ Not Sa~ Not a ~  0.0283 0.00943
+    ## 10           252       3       0       1 Not Mo~ Not Sa~ Not a ~  0.0397 0.0198 
+    ## # ... with 4,929 more rows, 3 more variables: avg_positive_polarity <dbl>,
+    ## #   avg_negative_polarity <dbl>, shares <dbl>, and abbreviated variable names
+    ## #   1: n_tokens_content, 2: num_hrefs, 3: num_imgs, 4: num_videos,
+    ## #   5: weekday_is_monday, 6: weekday_is_saturday, 7: is_weekend,
+    ## #   8: global_rate_positive_words, 9: global_rate_negative_words
+
 #### <u>**2) Fit a random forest model**</u>
 
 Here a random forest model will be fit on the train set using a
@@ -384,16 +408,64 @@ the variables.
 
 ``` r
 ## Create a grid of tuning parameters
-forestgrid <- expand.grid(mtry = c(1:15))
+forestgrid <- expand.grid(mtry = c(1:20))
 
 ## Fit the random forest model
 forestmod <- train(shares ~ . ,
                    data = train.set,
                    method = 'rf',
-                   trControl = trainControl(method = 'cv', number = 5),
+                   trControl = trainControl(method = 'cv', number= 5),
                    preProcess = c('center','scale'),
                    tuneGrid = forestgrid)
-#forestmod
+forestmod
+```
+
+    ## Random Forest 
+    ## 
+    ## 4939 samples
+    ##   11 predictor
+    ## 
+    ## Pre-processing: centered (11), scaled (11) 
+    ## Resampling: Cross-Validated (5 fold) 
+    ## Summary of sample sizes: 3953, 3950, 3952, 3951, 3950 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   mtry  RMSE      Rsquared     MAE     
+    ##    1    7586.019  0.004854547  2978.319
+    ##    2    7668.107  0.006635436  3083.203
+    ##    3    7731.411  0.007241371  3153.010
+    ##    4    7797.593  0.007284751  3201.993
+    ##    5    7829.618  0.006905499  3219.191
+    ##    6    7868.161  0.006561780  3235.896
+    ##    7    7888.915  0.007217257  3256.040
+    ##    8    7907.136  0.006524527  3260.511
+    ##    9    7963.117  0.006533922  3281.364
+    ##   10    7997.740  0.006522236  3296.997
+    ##   11    8011.162  0.006419175  3305.757
+    ##   12    8010.231  0.006496982  3304.502
+    ##   13    8048.652  0.005787055  3310.968
+    ##   14    8008.497  0.006230320  3306.812
+    ##   15    7989.358  0.006426498  3297.151
+    ##   16    8031.663  0.006589208  3306.460
+    ##   17    7985.681  0.007076473  3303.178
+    ##   18    8031.762  0.006073337  3309.343
+    ##   19    8004.879  0.006290055  3309.667
+    ##   20    8046.403  0.006033799  3318.623
+    ## 
+    ## RMSE was used to select the optimal model using the smallest value.
+    ## The final value used for the model was mtry = 1.
+
+``` r
+## Get the optimal tuned parameter
+mtry.opt <- forestmod$bestTune$mtry
+
+## Refit the random forest model on the train set using the optimal tuned parameter
+forest.tuned <-  train(shares ~ . ,
+                   data = train.set,
+                   method = 'rf',
+                   trControl = trainControl(method = 'cv', number= 5),
+                   preProcess = c('center','scale'),
+                   tuneGrid = expand.grid(mtry = mtry.opt))
 ```
 
 # Second group member’s summarizations
@@ -464,6 +536,15 @@ articles were published on weekend.
 # Second group member’s modeling
 
 # Comparison of the four models
+
+``` r
+## Predict the RF model on the test set 
+forest.pred <- predict(forest.tuned, newdata = test.set)
+
+## Get the accuracy of the RF model
+forest.acc <- confusionMatrix(forest.pred, test.set$shares)
+forest.acc
+```
 
 # Automation
 
