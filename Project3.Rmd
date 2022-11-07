@@ -252,7 +252,55 @@ the articles were published on weekend.
 
 # Second group member's modeling
 
+## another linear regression model fit
+```{r}
+lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
+                           global_rate_negative_words+
+                           avg_positive_polarity+avg_negative_polarity)^2+
+                           weekday_is_monday+weekday_is_saturday+
+                          is_weekend,
+                 data = train.set,
+                 method = "lm",
+                 preProcess = c("center", "scale"),
+                 trControl = trainControl(method = "cv", number = 10))
 
+summary(lm.fit2)
+```
+#What is a boosted tree model.
+
+The boosted tree model is a general approach that can be applied to trees.
+Trees grown sequentially and each subsequent tree is grown on a modified version of original data.
+When tree growing, the predictions also are updated.
+Thus, it solves errors that created by previous decision trees. 
+Boosting transforms weak decision trees, which are weak learners into strong learners.
+Boosting is an iterative process. Each tree is dependent on the previous tree. 
+For the procedure, we can initialize predictions as 0, and Find the residuals (observed-predicted), call the set of them r.
+And then we fit a tree with splits (terminal nodes) treating the residuals as the
+response, which they are for the first fit. After that, we can update predictions and update 
+residuals for new predictions and repeat B times. 
+
+
+#a boosted tree model. 
+
+```{r}
+boosted_fit <- train(shares ~., data = train.set, method = "gbm",
+                       trControl = trainControl(method = "repeatedcv", 
+                                                number = 5, repeats = 3),
+                       preProcess = c("center", "scale"),
+                       tuneGrid = expand.grid(n.trees = c(25, 50, 100, 150, 200, 250),
+                                              interaction.depth = 1:5,
+                                              shrinkage = 0.1,
+                                              n.minobsinnode = 10),
+                       verbose = FALSE)
+boosted_fit
+
+
+boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
+
+boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
+
+boostRMSE
+```
 # Comparison of the four models
 
 # Automation
