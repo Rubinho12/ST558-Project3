@@ -504,7 +504,7 @@ articles were published on weekend.
 #### <u>Fit another linear regression model</u>
 
 ``` r
-lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
+regmod2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
                            global_rate_negative_words+
                            avg_positive_polarity+avg_negative_polarity)^2+
                            weekday_is_monday+weekday_is_saturday+
@@ -514,7 +514,7 @@ lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_r
                  preProcess = c("center", "scale"),
                  trControl = trainControl(method = "cv", number = 10))
 
-summary(lm.fit2)
+summary(regmod2)
 ```
 
     ## 
@@ -722,10 +722,10 @@ forest.pred <- predict(forest.tuned, newdata = test.set)
 forest.rmse <- postResample(forest.pred, test.set$shares)[1]
 
 ## Predict the second linear regression model on the test set
-lmfit2.pred <- predict(lm.fit2, newdata = test.set)
+regmod2.pred <- predict(regmod2, newdata = test.set)
 
 ## Get the RMSE of the second linear regression model
-lmfit2.rmse <- postResample(lmfit2.pred, test.set$shares)[1]
+regmod2.rmse <- postResample(regmod2.pred, test.set$shares)[1]
 
 ## Predict the boosted tree model on the test set
 boosted.pred <- predict(boosted_fit, newdata = test.set)
@@ -736,7 +736,7 @@ boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
 ## Combine the four RMSE in a table
 data.frame(Regression = regmod.rmse,
            Forest = forest.rmse,
-           Pol.regression = lmfit2.rmse,
+           Pol.regression = regmod2.rmse,
            Boosted.tree = boosted.rmse)
 ```
 
