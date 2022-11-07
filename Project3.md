@@ -320,6 +320,7 @@ be 70 percent of the whole data and the remaining 30 % will be the test
 set.
 
 ``` r
+## Set a seed for reproducible random numbers
 set.seed(12)
 
 ## Using the rsample package, create a training an test set (70/30)
@@ -327,19 +328,6 @@ index <- initial_split(newsdata, prop = 0.7)
 train.set <- training(index)
 test.set <- testing(index)
 
-## Check the dimensions of the sets
-dim(train.set)
-```
-
-    ## [1] 4939   12
-
-``` r
-dim(test.set)
-```
-
-    ## [1] 2118   12
-
-``` r
 ## Fit a linear regression model
 regmod <- lm(shares ~. , data = train.set)
 summary(regmod)
@@ -373,29 +361,6 @@ summary(regmod)
     ## Residual standard error: 7793 on 4927 degrees of freedom
     ## Multiple R-squared:  0.004994,   Adjusted R-squared:  0.002773 
     ## F-statistic: 2.248 on 11 and 4927 DF,  p-value: 0.01011
-
-``` r
-train.set
-```
-
-    ## # A tibble: 4,939 x 12
-    ##    n_tokens_co~1 num_h~2 num_i~3 num_v~4 weekd~5 weekd~6 is_we~7 globa~8 globa~9
-    ##            <dbl>   <dbl>   <dbl>   <dbl> <fct>   <fct>   <fct>     <dbl>   <dbl>
-    ##  1           643       6       1       0 Not Mo~ Not Sa~ Not a ~  0.0544 0.0358 
-    ##  2           465       2       2       1 Not Mo~ Not Sa~ Not a ~  0.0366 0.0323 
-    ##  3          1295      50       8       2 Not Mo~ Not Sa~ Not a ~  0.0548 0.0139 
-    ##  4           685      20       1       0 Not Mo~ Not Sa~ Not a ~  0.0263 0.0102 
-    ##  5           980       5       0      27 Not Mo~ Not Sa~ Not a ~  0.0571 0.0582 
-    ##  6           639      21       1       0 Not Mo~ It is ~ Weekend  0.0313 0.00939
-    ##  7           749      25      11       2 Not Mo~ It is ~ Weekend  0.0374 0.00534
-    ##  8           152       4       0       1 It is ~ Not Sa~ Not a ~  0.0724 0.0132 
-    ##  9           424      22       0      12 Not Mo~ Not Sa~ Not a ~  0.0283 0.00943
-    ## 10           252       3       0       1 Not Mo~ Not Sa~ Not a ~  0.0397 0.0198 
-    ## # ... with 4,929 more rows, 3 more variables: avg_positive_polarity <dbl>,
-    ## #   avg_negative_polarity <dbl>, shares <dbl>, and abbreviated variable names
-    ## #   1: n_tokens_content, 2: num_hrefs, 3: num_imgs, 4: num_videos,
-    ## #   5: weekday_is_monday, 6: weekday_is_saturday, 7: is_weekend,
-    ## #   8: global_rate_positive_words, 9: global_rate_negative_words
 
 #### <u>**2) Fit a random forest model**</u>
 
@@ -730,14 +695,12 @@ boosted_fit
     ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
 
 ``` r
-boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
-
-boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
-
-boostRMSE
+# boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
+# 
+# boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
+# 
+# boostRMSE
 ```
-
-    ## [1] 7996.108
 
 # Comparison of the four models
 

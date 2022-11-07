@@ -157,6 +157,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   
   The data now will be split into a train and test sets, and a multiple linear regression model will be fit on the train set. The train set will be 70 percent of the whole data and the remaining 30 % will be the test set.  
 ```{r}
+## Set a seed for reproducible random numbers
 set.seed(12)
 
 ## Using the rsample package, create a training an test set (70/30)
@@ -164,14 +165,9 @@ index <- initial_split(newsdata, prop = 0.7)
 train.set <- training(index)
 test.set <- testing(index)
 
-## Check the dimensions of the sets
-dim(train.set)
-dim(test.set)
-
 ## Fit a linear regression model
 regmod <- lm(shares ~. , data = train.set)
 summary(regmod)
-train.set
 ```
 
 
@@ -204,9 +200,6 @@ forest.tuned <-  train(shares ~ . ,
 
 
 ```
-
-
-
 
 
 # Second group member's summarizations
@@ -310,11 +303,11 @@ boosted_fit <- train(shares ~., data = train.set, method = "gbm",
 boosted_fit
 
 
-boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
-
-boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
-
-boostRMSE
+# boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
+# 
+# boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
+# 
+# boostRMSE
 ```
 
 
