@@ -314,9 +314,10 @@ avoided.
 
 #### <u>**1) Fit a linear regression model**</u>
 
-The data now will be split into a train and test sets, and a linear
-regression model will be fit on the train set. The train set will be 70
-percent of the whole data and the remaining 30 % will be the test set.
+The data now will be split into a train and test sets, and a multiple
+linear regression model will be fit on the train set. The train set will
+be 70 percent of the whole data and the remaining 30 % will be the test
+set.
 
 ``` r
 set.seed(12)
@@ -535,16 +536,253 @@ articles were published on weekend.
 
 # Second group member’s modeling
 
-# Comparison of the four models
+#### <u>Fit another linear regression model</u>
 
 ``` r
+lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
+                           global_rate_negative_words+
+                           avg_positive_polarity+avg_negative_polarity)^2+
+                           weekday_is_monday+weekday_is_saturday+
+                          is_weekend,
+                 data = train.set,
+                 method = "lm",
+                 preProcess = c("center", "scale"),
+                 trControl = trainControl(method = "cv", number = 10))
+
+summary(lm.fit2)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = .outcome ~ ., data = dat)
+    ## 
+    ## Residuals:
+    ##    Min     1Q Median     3Q    Max 
+    ##  -9133  -2171  -1544   -607 204565 
+    ## 
+    ## Coefficients:
+    ##                                                           Estimate Std. Error
+    ## (Intercept)                                              3008.8338   110.6968
+    ## n_tokens_content                                         -452.7689  1001.1837
+    ## num_hrefs                                                -262.5246   861.0290
+    ## num_imgs                                                   -0.1806   505.1364
+    ## num_videos                                               1514.0699  1023.5023
+    ## global_rate_positive_words                               -663.4216   456.7086
+    ## global_rate_negative_words                                152.7237   673.2389
+    ## avg_positive_polarity                                     508.5735   291.7776
+    ## avg_negative_polarity                                     887.7558   534.4288
+    ## `weekday_is_mondayIt is Monday`                            42.3394   113.5211
+    ## `weekday_is_saturdayIt is Saturday`                       -78.9738   142.4488
+    ## is_weekendWeekend                                         388.9508   144.5000
+    ## `n_tokens_content:num_hrefs`                              -57.5909   270.3023
+    ## `n_tokens_content:num_imgs`                              -480.8278   227.0521
+    ## `n_tokens_content:num_videos`                            -598.5825   306.1223
+    ## `n_tokens_content:global_rate_positive_words`             -70.3935   555.1266
+    ## `n_tokens_content:global_rate_negative_words`            -978.9152   477.5070
+    ## `n_tokens_content:avg_positive_polarity`                 1365.4403   949.7236
+    ## `n_tokens_content:avg_negative_polarity`                 -272.0893   696.6193
+    ## `num_hrefs:num_imgs`                                        0.3758   226.8739
+    ## `num_hrefs:num_videos`                                   -267.0771   212.5814
+    ## `num_hrefs:global_rate_positive_words`                    -42.2805   434.7830
+    ## `num_hrefs:global_rate_negative_words`                    561.9000   316.1399
+    ## `num_hrefs:avg_positive_polarity`                        -580.5220   585.3712
+    ## `num_hrefs:avg_negative_polarity`                        -662.4466   470.2632
+    ## `num_imgs:num_videos`                                      55.0378   157.0218
+    ## `num_imgs:global_rate_positive_words`                     151.4075   320.0304
+    ## `num_imgs:global_rate_negative_words`                     213.0509   283.5654
+    ## `num_imgs:avg_positive_polarity`                         -346.8439   567.4218
+    ## `num_imgs:avg_negative_polarity`                         -413.8272   504.8737
+    ## `num_videos:global_rate_positive_words`                  -175.7914   602.5024
+    ## `num_videos:global_rate_negative_words`                  -101.1534   420.7206
+    ## `num_videos:avg_positive_polarity`                       -881.5733   841.0536
+    ## `num_videos:avg_negative_polarity`                       -365.3125   731.0376
+    ## `global_rate_positive_words:global_rate_negative_words`  -234.8895   452.2093
+    ## `global_rate_positive_words:avg_positive_polarity`        271.6954   462.2073
+    ## `global_rate_positive_words:avg_negative_polarity`       -725.7470   421.7974
+    ## `global_rate_negative_words:avg_positive_polarity`       -907.6464   566.7522
+    ## `global_rate_negative_words:avg_negative_polarity`      -1082.6874   432.3514
+    ## `avg_positive_polarity:avg_negative_polarity`             203.6351   539.1400
+    ##                                                         t value Pr(>|t|)    
+    ## (Intercept)                                              27.181  < 2e-16 ***
+    ## n_tokens_content                                         -0.452  0.65112    
+    ## num_hrefs                                                -0.305  0.76046    
+    ## num_imgs                                                  0.000  0.99971    
+    ## num_videos                                                1.479  0.13912    
+    ## global_rate_positive_words                               -1.453  0.14639    
+    ## global_rate_negative_words                                0.227  0.82055    
+    ## avg_positive_polarity                                     1.743  0.08139 .  
+    ## avg_negative_polarity                                     1.661  0.09675 .  
+    ## `weekday_is_mondayIt is Monday`                           0.373  0.70919    
+    ## `weekday_is_saturdayIt is Saturday`                      -0.554  0.57933    
+    ## is_weekendWeekend                                         2.692  0.00713 ** 
+    ## `n_tokens_content:num_hrefs`                             -0.213  0.83129    
+    ## `n_tokens_content:num_imgs`                              -2.118  0.03425 *  
+    ## `n_tokens_content:num_videos`                            -1.955  0.05060 .  
+    ## `n_tokens_content:global_rate_positive_words`            -0.127  0.89910    
+    ## `n_tokens_content:global_rate_negative_words`            -2.050  0.04041 *  
+    ## `n_tokens_content:avg_positive_polarity`                  1.438  0.15058    
+    ## `n_tokens_content:avg_negative_polarity`                 -0.391  0.69612    
+    ## `num_hrefs:num_imgs`                                      0.002  0.99868    
+    ## `num_hrefs:num_videos`                                   -1.256  0.20905    
+    ## `num_hrefs:global_rate_positive_words`                   -0.097  0.92254    
+    ## `num_hrefs:global_rate_negative_words`                    1.777  0.07557 .  
+    ## `num_hrefs:avg_positive_polarity`                        -0.992  0.32139    
+    ## `num_hrefs:avg_negative_polarity`                        -1.409  0.15900    
+    ## `num_imgs:num_videos`                                     0.351  0.72597    
+    ## `num_imgs:global_rate_positive_words`                     0.473  0.63616    
+    ## `num_imgs:global_rate_negative_words`                     0.751  0.45249    
+    ## `num_imgs:avg_positive_polarity`                         -0.611  0.54105    
+    ## `num_imgs:avg_negative_polarity`                         -0.820  0.41245    
+    ## `num_videos:global_rate_positive_words`                  -0.292  0.77048    
+    ## `num_videos:global_rate_negative_words`                  -0.240  0.81001    
+    ## `num_videos:avg_positive_polarity`                       -1.048  0.29461    
+    ## `num_videos:avg_negative_polarity`                       -0.500  0.61730    
+    ## `global_rate_positive_words:global_rate_negative_words`  -0.519  0.60349    
+    ## `global_rate_positive_words:avg_positive_polarity`        0.588  0.55668    
+    ## `global_rate_positive_words:avg_negative_polarity`       -1.721  0.08539 .  
+    ## `global_rate_negative_words:avg_positive_polarity`       -1.601  0.10933    
+    ## `global_rate_negative_words:avg_negative_polarity`       -2.504  0.01231 *  
+    ## `avg_positive_polarity:avg_negative_polarity`             0.378  0.70567    
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 7780 on 4899 degrees of freedom
+    ## Multiple R-squared:  0.01398,    Adjusted R-squared:  0.006129 
+    ## F-statistic: 1.781 on 39 and 4899 DF,  p-value: 0.002035
+
+#### What is a boosted tree model?
+
+The boosted tree model is a general approach that can be applied to
+trees. Trees grown sequentially and each subsequent tree is grown on a
+modified version of original data. When tree growing, the predictions
+also are updated. Thus, it solves errors that created by previous
+decision trees. Boosting transforms weak decision trees, which are weak
+learners into strong learners. Boosting is an iterative process. Each
+tree is dependent on the previous tree. For the procedure, we can
+initialize predictions as 0, and Find the residuals
+(observed-predicted), call the set of them r. And then we fit a tree
+with splits (terminal nodes) treating the residuals as the response,
+which they are for the first fit. After that, we can update predictions
+and update residuals for new predictions and repeat B times.
+
+#### <u>Fit a boosted tree model</u>
+
+``` r
+boosted_fit <- train(shares ~., data = train.set, method = "gbm",
+                       trControl = trainControl(method = "repeatedcv", 
+                                                number = 5, repeats = 3),
+                       preProcess = c("center", "scale"),
+                       tuneGrid = expand.grid(n.trees = c(25, 50, 100, 150, 200, 250),
+                                              interaction.depth = 1:5,
+                                              shrinkage = 0.1,
+                                              n.minobsinnode = 10),
+                       verbose = FALSE)
+boosted_fit
+```
+
+    ## Stochastic Gradient Boosting 
+    ## 
+    ## 4939 samples
+    ##   11 predictor
+    ## 
+    ## Pre-processing: centered (11), scaled (11) 
+    ## Resampling: Cross-Validated (5 fold, repeated 3 times) 
+    ## Summary of sample sizes: 3951, 3952, 3951, 3951, 3951, 3951, ... 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   interaction.depth  n.trees  RMSE      Rsquared     MAE     
+    ##   1                   25      7675.511  0.001623442  2984.307
+    ##   1                   50      7677.644  0.002248003  2980.624
+    ##   1                  100      7663.687  0.003897654  2973.389
+    ##   1                  150      7668.799  0.004222771  2965.731
+    ##   1                  200      7670.919  0.004624101  2966.729
+    ##   1                  250      7673.796  0.004574173  2972.924
+    ##   2                   25      7667.371  0.004281103  2977.906
+    ##   2                   50      7665.057  0.005730841  2969.847
+    ##   2                  100      7683.244  0.006281649  2986.228
+    ##   2                  150      7692.433  0.006551915  2983.730
+    ##   2                  200      7702.688  0.006727955  3002.972
+    ##   2                  250      7703.894  0.006629299  3004.502
+    ##   3                   25      7679.780  0.004692563  2995.435
+    ##   3                   50      7699.477  0.005576263  2997.946
+    ##   3                  100      7731.382  0.005825901  3016.091
+    ##   3                  150      7777.480  0.004640207  3054.139
+    ##   3                  200      7803.416  0.004427323  3076.974
+    ##   3                  250      7861.564  0.003312166  3125.318
+    ##   4                   25      7703.025  0.003571586  2996.944
+    ##   4                   50      7744.665  0.004487602  3012.707
+    ##   4                  100      7806.563  0.004574995  3047.849
+    ##   4                  150      7870.150  0.004145567  3106.538
+    ##   4                  200      7918.236  0.003510249  3160.308
+    ##   4                  250      7950.387  0.003732412  3198.517
+    ##   5                   25      7713.377  0.003290994  2994.514
+    ##   5                   50      7766.228  0.003324415  3026.293
+    ##   5                  100      7861.682  0.002781991  3091.654
+    ##   5                  150      7927.205  0.002452849  3155.525
+    ##   5                  200      7979.776  0.002316107  3222.314
+    ##   5                  250      8007.899  0.002335191  3269.750
+    ## 
+    ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
+    ## 
+    ## Tuning parameter 'n.minobsinnode' was held constant at a value of 10
+    ## RMSE was used to select the optimal model using the smallest value.
+    ## The final values used for the model were n.trees = 100, interaction.depth =
+    ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
+
+``` r
+boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
+
+boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
+
+boostRMSE
+```
+
+    ## [1] 7996.108
+
+# Comparison of the four models
+
+We will predict the four models fitted above on the test set and use the
+postResample() function to get the test metrics. We are more concerned
+about the root mean squared error (RMSE) as the measure of our models.
+
+``` r
+## Predict the multiple regression fit on the test set
+regmod.pred <- predict(regmod, newdata = test.set)
+
+## Get the RMSE of the regression model
+regmod.rmse <- postResample(regmod.pred, test.set$shares)[1]
+
 ## Predict the RF model on the test set 
 forest.pred <- predict(forest.tuned, newdata = test.set)
 
-## Get the accuracy of the RF model
-forest.acc <- confusionMatrix(forest.pred, test.set$shares)
-forest.acc
+## Get the RMSE of the Random Forest model
+forest.rmse <- postResample(forest.pred, test.set$shares)[1]
+
+## Predict the second linear regression model on the test set
+lmfit2.pred <- predict(lm.fit2, newdata = test.set)
+
+## Get the RMSE of the second linear regression model
+lmfit2.rmse <- postResample(lmfit2.pred, test.set$shares)[1]
+
+## Predict the boosted tree model on the test set
+boosted.pred <- predict(boosted_fit, newdata = test.set)
+
+## Get the RMSE of the boosted tree model
+boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
+
+## Combine the four RMSE in a table
+data.frame(Regression = regmod.rmse,
+           Forest = forest.rmse,
+           Pol.regression = lmfit2.rmse,
+           Boosted.tree = boosted.rmse)
 ```
+
+    ##      Regression   Forest Pol.regression Boosted.tree
+    ## RMSE   7969.713 7951.099       7987.876     7996.108
+
+The **random forest** model has the lowest root mean squared error of
+all four models, with a value of **7951.099**, hence is our winner
+model.
 
 # Automation
 

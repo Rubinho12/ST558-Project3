@@ -155,7 +155,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   
 #### [__1) Fit a linear regression model__]{.underline}
   
-  The data now will be split into a train and test sets, and a linear regression model will be fit on the train set. The train set will be 70 percent of the whole data and the remaining 30 % will be the test set.  
+  The data now will be split into a train and test sets, and a multiple linear regression model will be fit on the train set. The train set will be 70 percent of the whole data and the remaining 30 % will be the test set.  
 ```{r}
 set.seed(12)
 
@@ -266,7 +266,7 @@ the articles were published on weekend.
 
 # Second group member's modeling
 
-## another linear regression model fit
+#### [Fit another linear regression model]{.underline}
 ```{r}
 lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
                            global_rate_negative_words+
@@ -280,7 +280,8 @@ lm.fit2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_r
 
 summary(lm.fit2)
 ```
-#What is a boosted tree model.
+
+#### What is a boosted tree model?
 
 The boosted tree model is a general approach that can be applied to trees.
 Trees grown sequentially and each subsequent tree is grown on a modified version of original data.
@@ -294,7 +295,7 @@ response, which they are for the first fit. After that, we can update prediction
 residuals for new predictions and repeat B times. 
 
 
-#a boosted tree model. 
+#### [Fit a boosted tree model]{.underline} 
 
 ```{r}
 boosted_fit <- train(shares ~., data = train.set, method = "gbm",
@@ -315,16 +316,45 @@ boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
 
 boostRMSE
 ```
-# Comparison of the four models
-```{r,eval = F}
+
+
+# Comparison of the four models  
+
+  We will predict the four models fitted above on the test set and use the postResample() function to get the test metrics. We are more concerned about the root mean squared error (RMSE) as the measure of our models.
+  
+```{r,eval = T}
+## Predict the multiple regression fit on the test set
+regmod.pred <- predict(regmod, newdata = test.set)
+
+## Get the RMSE of the regression model
+regmod.rmse <- postResample(regmod.pred, test.set$shares)[1]
+
 ## Predict the RF model on the test set 
 forest.pred <- predict(forest.tuned, newdata = test.set)
 
-## Get the accuracy of the RF model
-forest.acc <- confusionMatrix(forest.pred, test.set$shares)
-forest.acc
+## Get the RMSE of the Random Forest model
+forest.rmse <- postResample(forest.pred, test.set$shares)[1]
+
+## Predict the second linear regression model on the test set
+lmfit2.pred <- predict(lm.fit2, newdata = test.set)
+
+## Get the RMSE of the second linear regression model
+lmfit2.rmse <- postResample(lmfit2.pred, test.set$shares)[1]
+
+## Predict the boosted tree model on the test set
+boosted.pred <- predict(boosted_fit, newdata = test.set)
+
+## Get the RMSE of the boosted tree model
+boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
+
+## Combine the four RMSE in a table
+data.frame(Regression = regmod.rmse,
+           Forest = forest.rmse,
+           Pol.regression = lmfit2.rmse,
+           Boosted.tree = boosted.rmse)
 ```
 
+  The **random forest** model has the lowest root mean squared error of all four models, with a value of **7951.099**, hence is our winner model. 
 
 # Automation
 
