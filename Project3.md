@@ -329,13 +329,18 @@ train.set <- training(index)
 test.set <- testing(index)
 
 ## Fit a linear regression model
-regmod <- lm(shares ~. , data = train.set)
+regmod <- train(shares ~. ,
+                data = train.set,
+                method = 'lm',
+                preProcess = c('center','scale'),
+                trControl = trainControl(method = 'cv', number = 5)
+                )
 summary(regmod)
 ```
 
     ## 
     ## Call:
-    ## lm(formula = shares ~ ., data = train.set)
+    ## lm(formula = .outcome ~ ., data = dat)
     ## 
     ## Residuals:
     ##    Min     1Q Median     3Q    Max 
@@ -343,18 +348,18 @@ summary(regmod)
     ## 
     ## Coefficients:
     ##                                     Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)                        2.163e+03  4.583e+02   4.719 2.44e-06 ***
-    ## n_tokens_content                  -6.383e-02  2.620e-01  -0.244  0.80748    
-    ## num_hrefs                          1.470e+01  9.752e+00   1.507  0.13182    
-    ## num_imgs                           1.316e+01  1.122e+01   1.173  0.24076    
-    ## num_videos                         1.204e+01  1.965e+01   0.613  0.54023    
-    ## weekday_is_mondayIt is Monday      1.595e+02  2.883e+02   0.553  0.58001    
-    ## weekday_is_saturdayIt is Saturday -4.801e+02  6.178e+02  -0.777  0.43712    
-    ## is_weekendWeekend                  1.251e+03  4.234e+02   2.954  0.00315 ** 
-    ## global_rate_positive_words        -8.560e+03  7.215e+03  -1.186  0.23551    
-    ## global_rate_negative_words        -9.847e+03  9.912e+03  -0.994  0.32051    
-    ## avg_positive_polarity              1.985e+03  1.156e+03   1.717  0.08598 .  
-    ## avg_negative_polarity             -8.386e+02  9.667e+02  -0.867  0.38576    
+    ## (Intercept)                          3008.83     110.88  27.135  < 2e-16 ***
+    ## n_tokens_content                      -34.28     140.69  -0.244  0.80748    
+    ## num_hrefs                             186.04     123.43   1.507  0.13182    
+    ## num_imgs                              156.43     133.33   1.173  0.24076    
+    ## num_videos                             74.41     121.48   0.613  0.54023    
+    ## `weekday_is_mondayIt is Monday`        62.73     113.35   0.553  0.58001    
+    ## `weekday_is_saturdayIt is Saturday`  -110.29     141.92  -0.777  0.43712    
+    ## is_weekendWeekend                     424.50     143.72   2.954  0.00315 ** 
+    ## global_rate_positive_words           -145.56     122.69  -1.186  0.23551    
+    ## global_rate_negative_words           -125.44     126.26  -0.994  0.32051    
+    ## avg_positive_polarity                 210.48     122.56   1.717  0.08598 .  
+    ## avg_negative_polarity                -108.65     125.25  -0.867  0.38576    
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 

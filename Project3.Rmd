@@ -166,7 +166,12 @@ train.set <- training(index)
 test.set <- testing(index)
 
 ## Fit a linear regression model
-regmod <- lm(shares ~. , data = train.set)
+regmod <- train(shares ~. ,
+                data = train.set,
+                method = 'lm',
+                preProcess = c('center','scale'),
+                trControl = trainControl(method = 'cv', number = 5)
+                )
 summary(regmod)
 ```
 
