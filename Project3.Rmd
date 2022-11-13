@@ -2,9 +2,12 @@
 title: "Project3"
 author: "Ruben Sowah and  Zhiyuan Yang"
 date: "2022-10-30"
+params: 
+  channel: "data_channel_is_entertainment"
 output: 
   github_document :
     toc: true
+    
 ---
 
 ```{r setup, include=FALSE}
@@ -13,11 +16,11 @@ knitr::opts_chunk$set(echo = TRUE,message  = F, warning = F, cache = T)
 
 
 ```{r, echo = F, eval = F}
-rmarkdown::render("project3.Rmd",
-                  output_format = "github_document",
-                  output_file = "README.md",
-                  output_options = list(
-                  html_preview = FALSE, toc = TRUE, toc_depth = 2, toc_float = TRUE))
+#rmarkdown::render("project3.Rmd",
+                  #output_format = "github_document",
+                  #output_file = "README.md",
+                  #output_options = list(
+                  #html_preview = FALSE, toc = TRUE, toc_depth = 2, toc_float = TRUE))
 ```
 # Introduction
 
@@ -38,16 +41,20 @@ library(corrplot)
 library(knitr)
 library(rsample)
 library(randomForest)
+library(rmarkdown)
+library(tibble)
+library(haven)
 ```
 
 # Read in the data
 
 ```{r}
 ## Read and get an overview of the data
-newsdata <- read_csv("OnlineNewsPopularity.csv")
+#newsdata <- read_csv("OnlineNewsPopularity.csv")
+newsdata <- read_csv("C:\\Users\\zyang\\Desktop\\OnlineNewsPopularity\\OnlineNewsPopularity.csv")
 head(newsdata)
 
-## Subset the data by the entertainment channel, and select our desired features
+## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
         filter(data_channel_is_entertainment == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
@@ -356,4 +363,24 @@ data.frame(Regression = regmod.rmse,
 
 # Automation
 
+#get channels' name
+```{r}
+channels <-unique(newsdata$channel)
+          
+output_file <- paste0(channels, ".md")
+
+#create a list for each channel with just the channel name parameter
+
+params = lapply(channels, FUN = function(x){list(channel = x)})
+
+#put into a data frame
+reports <- tibble(output_file, params)
+
+#need to use x[[1]] to get at elements since tibble doesn't simplify
+apply(reports, MARGIN = 1,FUN = function(x){
+
+render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
+  
+})
+```
 # Conclusion
