@@ -268,6 +268,17 @@ the number of articles have small number of shares.
 The No means the articles were published on weekend. The Yes means
 the articles were published on weekend.
 
+```{r}
+g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
+g + geom_point(color = 'green')+
+  labs(title = 'number of tokens content vs Number of shares')
+
+```
+
+***Comments:***
+Based on this scatter plot, we can see how many points plotted in the Cartesian plane. Each point represents the values of number of shares and number of token content. The closer the data points come to forming a straight line when plotted, it means that number of shares and number of token content have stronger the relationship. If the data points make a straight line going from near the origin out to high y-values, variables will have a positive correlation.
+
+
 
 # Second group member's modeling
 
