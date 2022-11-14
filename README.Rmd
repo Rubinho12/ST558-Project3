@@ -35,7 +35,7 @@ reports = tibble(channels, output_file, params);reports
 
 apply(reports, MARGIN = 1, FUN = function(x){
 
-render(input = "Project3.Rmd",
+rmarkdown::render(input = "Project3.Rmd",
 
                     #output_format = "github_document",
 
