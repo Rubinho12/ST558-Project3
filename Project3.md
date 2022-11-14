@@ -3,26 +3,6 @@ Project3
 Ruben Sowah and Zhiyuan Yang
 2022-10-30
 
--   <a href="#introduction" id="toc-introduction">Introduction</a>
--   <a href="#load-packages" id="toc-load-packages">Load packages</a>
--   <a href="#read-in-the-data" id="toc-read-in-the-data">Read in the
-    data</a>
--   <a href="#first-group-members-summarizations"
-    id="toc-first-group-members-summarizations">First group member’s
-    summarizations</a>
--   <a href="#first-group-members-modeling"
-    id="toc-first-group-members-modeling">First group member’s modeling</a>
--   <a href="#second-group-members-summarizations"
-    id="toc-second-group-members-summarizations">Second group member’s
-    summarizations</a>
--   <a href="#second-group-members-modeling"
-    id="toc-second-group-members-modeling">Second group member’s
-    modeling</a>
--   <a href="#comparison-of-the-four-models"
-    id="toc-comparison-of-the-four-models">Comparison of the four models</a>
--   <a href="#automation" id="toc-automation">Automation</a>
--   <a href="#conclusion" id="toc-conclusion">Conclusion</a>
-
 # Introduction
 
 The dataset that we used is called Online News Popularity Data set. This

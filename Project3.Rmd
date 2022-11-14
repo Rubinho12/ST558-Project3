@@ -2,9 +2,7 @@
 title: "Project3"
 author: "Ruben Sowah and  Zhiyuan Yang"
 date: "2022-10-30"
-output: 
-  github_document:
-    toc: true
+output: rmarkdown::github_document
 params: 
   chan: 'data_channel_is_entertainment'
     
