@@ -14,3 +14,5 @@ corrplot
 knitr
 rsample
 randomForest
+rmarkdown
+haven

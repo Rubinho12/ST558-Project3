@@ -2,11 +2,12 @@
 title: "Project3"
 author: "Ruben Sowah and  Zhiyuan Yang"
 date: "2022-10-30"
-params: 
-  channel: "data_channel_is_entertainment"
 output: 
-  github_document :
+  github_document:
     toc: true
+#params: 
+   #chan: 'data_channel_is_entertainment'
+    
     
 ---
 
@@ -50,13 +51,14 @@ library(haven)
 
 ```{r}
 ## Read and get an overview of the data
-#newsdata <- read_csv("OnlineNewsPopularity.csv")
-newsdata <- read_csv("C:\\Users\\zyang\\Desktop\\OnlineNewsPopularity\\OnlineNewsPopularity.csv")
+newsdata <- read_csv("OnlineNewsPopularity.csv")
+#newsdata <- read_csv("C:\\Users\\zyang\\Desktop\\OnlineNewsPopularity\\OnlineNewsPopularity.csv")
 head(newsdata)
 
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
         filter(data_channel_is_entertainment == 1) %>%
+       # filter(!!rlang::sym(params$channel) == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
@@ -186,7 +188,7 @@ summary(regmod)
 #### [__2) Fit a random forest model__]{.underline} 
 
   Here a random forest model will be fit on the train set using a cross-validation with 5 folds. We will use the expand.grid() function to select a range of parameters that will be tuned in our model. The optimal parameter that minimizes th error will be chosen and the model will be refit on the train set using that optimal parameter. We will also center and scale the train data for a more accurate distribution of the variables.  
-```{r, eval = T}
+```{r, eval = F}
 ## Create a grid of tuning parameters
 forestgrid <- expand.grid(mtry = c(1:20))
 
@@ -338,7 +340,7 @@ boosted_fit
 
   We will predict the four models fitted above on the test set and use the postResample() function to get the test metrics. We are more concerned about the root mean squared error (RMSE) as the measure of our models.
   
-```{r,eval = T}
+```{r,eval = F}
 ## Predict the multiple regression fit on the test set
 regmod.pred <- predict(regmod, newdata = test.set)
 
@@ -375,23 +377,120 @@ data.frame(Regression = regmod.rmse,
 # Automation
 
 #get channels' name
-```{r}
-channels <-unique(newsdata$channel)
+```{r, eval = F}
+mydata <- read_csv("OnlineNewsPopularity.csv")
+
+data <- mydata %>%
+          pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'channel',values_to = 'logi.num.d')
+
+data1 <- data %>% 
+          filter(logi.num.d !=0) %>%
+          select(-logi.num.d) 
+
+data2 <- data1 %>%
+          pivot_longer(cols=weekday_is_monday:weekday_is_sunday, names_to = 'weekday',values_to = 'logi.num.w') 
+  
+data3 <- data2 %>%
+          filter(logi.num.w!=0) %>%
+          select(-logi.num.w)
+
+channels <- unique(data3$channel)
           
-output_file <- paste0(channels, ".md")
+output_file <- paste0(channels,".md")
+
 
 #create a list for each channel with just the channel name parameter
 
 params = lapply(channels, FUN = function(x){list(channel = x)})
 
+
 #put into a data frame
-reports <- tibble(output_file, params)
+reports <- tibble::tibble(output_file, params); reports
 
 #need to use x[[1]] to get at elements since tibble doesn't simplify
 apply(reports, MARGIN = 1,FUN = function(x){
 
 render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
-  
+
 })
 ```
+
+
+
+```{r, eval = T}
+channels <- c("data_channel_is_lifestyle", "data_channel_is_entertainment", "data_channel_is_bus", "data_channel_is_socmed", "data_channel_is_tech", "data_channel_is_world")
+
+# Create file names
+
+#name <- c("Lifestyle", "Entertainment", "Business", "SocialMedia",
+
+         # "Tech", "World")
+
+output_file <- paste0(channels,".md")
+
+# Create a list for each channel with just channel name parameter
+
+ params = lapply(channels, FUN = function(x){
+ 
+   return(list(chan = x))
+
+})
+
+# Put into a data frame
+
+reports = tibble(channels, output_file, params);reports
+```
+
+
+```{r,eval=F}
+# Automation
+
+apply(reports, MARGIN = 1, FUN = function(x){
+
+render(input = "Project3.Rmd",
+
+                    #output_format = "github_document",
+
+                    output_file = x[[2]],
+
+                    params = x[[3]])
+                    #params = list(chan = chan, name = name),
+
+                    #output_options = list(html_preview = FALSE)
+
+})
+
+
+```
+
+
+```{r,eval=F}
+mydata <-read_csv("OnlineNewsPopularity.csv")
+params$chan
+
+mydat <- mydata %>% 
+        select( data_channel_is_lifestyle:data_channel_is_world) %>%
+        # filter((data_channel_is_lifestyle == 1) & (data_channel_is_entertainment == 1) & (data_channel_is_bus == 1) & (data_channel_is_socmed == 1) & (data_channel_is_tech == 1) & (data_channel_is_world == 1) ) 
+        pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'ch', values_to = 'val') %>%
+  filter(val == 1)
+ 
+mydat
+
+channels <- unique(mydat$ch)
+output_file <- paste0(channels,'.md')
+
+params <- lapply(channels, FUN = function(x){list(chan = x)})
+
+
+#put into a data frame
+reports <- tibble(output_file, params); reports
+
+#need to use x[[1]] to get at elements since tibble doesn't simplify
+apply(reports, MARGIN = 1,FUN = function(x){
+
+render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
+
+})
+```
+
 # Conclusion

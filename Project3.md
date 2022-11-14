@@ -64,6 +64,9 @@ library(corrplot)
 library(knitr)
 library(rsample)
 library(randomForest)
+library(rmarkdown)
+library(tibble)
+library(haven)
 ```
 
 # Read in the data
@@ -71,6 +74,7 @@ library(randomForest)
 ``` r
 ## Read and get an overview of the data
 newsdata <- read_csv("OnlineNewsPopularity.csv")
+#newsdata <- read_csv("C:\\Users\\zyang\\Desktop\\OnlineNewsPopularity\\OnlineNewsPopularity.csv")
 head(newsdata)
 ```
 
@@ -92,9 +96,10 @@ head(newsdata)
     ## #   kw_min_avg <dbl>, kw_max_avg <dbl>, kw_avg_avg <dbl>, ...
 
 ``` r
-## Subset the data by the entertainment channel, and select our desired features
+## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
         filter(data_channel_is_entertainment == 1) %>%
+       # filter(!!rlang::sym(params$channel) == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
@@ -389,44 +394,7 @@ forestmod <- train(shares ~ . ,
                    preProcess = c('center','scale'),
                    tuneGrid = forestgrid)
 forestmod
-```
 
-    ## Random Forest 
-    ## 
-    ## 4939 samples
-    ##   11 predictor
-    ## 
-    ## Pre-processing: centered (11), scaled (11) 
-    ## Resampling: Cross-Validated (5 fold) 
-    ## Summary of sample sizes: 3953, 3950, 3952, 3951, 3950 
-    ## Resampling results across tuning parameters:
-    ## 
-    ##   mtry  RMSE      Rsquared     MAE     
-    ##    1    7586.019  0.004854547  2978.319
-    ##    2    7668.107  0.006635436  3083.203
-    ##    3    7731.411  0.007241371  3153.010
-    ##    4    7797.593  0.007284751  3201.993
-    ##    5    7829.618  0.006905499  3219.191
-    ##    6    7868.161  0.006561780  3235.896
-    ##    7    7888.915  0.007217257  3256.040
-    ##    8    7907.136  0.006524527  3260.511
-    ##    9    7963.117  0.006533922  3281.364
-    ##   10    7997.740  0.006522236  3296.997
-    ##   11    8011.162  0.006419175  3305.757
-    ##   12    8010.231  0.006496982  3304.502
-    ##   13    8048.652  0.005787055  3310.968
-    ##   14    8008.497  0.006230320  3306.812
-    ##   15    7989.358  0.006426498  3297.151
-    ##   16    8031.663  0.006589208  3306.460
-    ##   17    7985.681  0.007076473  3303.178
-    ##   18    8031.762  0.006073337  3309.343
-    ##   19    8004.879  0.006290055  3309.667
-    ##   20    8046.403  0.006033799  3318.623
-    ## 
-    ## RMSE was used to select the optimal model using the smallest value.
-    ## The final value used for the model was mtry = 1.
-
-``` r
 ## Get the optimal tuned parameter
 mtry.opt <- forestmod$bestTune$mtry
 
@@ -503,6 +471,22 @@ shape, it means that the number of articles have large number of shares
 is similar with the number of articles have small number of shares. The
 No means the articles were published on weekend. The Yes means the
 articles were published on weekend.
+
+``` r
+g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
+g + geom_point(color = 'green')+
+  labs(title = 'number of tokens content vs Number of shares')
+```
+
+![](Project3_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+***Comments:*** Based on this scatter plot, we can see how many points
+plotted in the Cartesian plane. Each point represents the values of
+number of shares and number of token content. The closer the data points
+come to forming a straight line when plotted, it means that number of
+shares and number of token content have stronger the relationship. If
+the data points make a straight line going from near the origin out to
+high y-values, variables will have a positive correlation.
 
 # Second group member’s modeling
 
@@ -657,46 +641,46 @@ boosted_fit
     ## 
     ## Pre-processing: centered (11), scaled (11) 
     ## Resampling: Cross-Validated (5 fold, repeated 3 times) 
-    ## Summary of sample sizes: 3951, 3952, 3951, 3951, 3951, 3951, ... 
+    ## Summary of sample sizes: 3951, 3951, 3950, 3953, 3951, 3951, ... 
     ## Resampling results across tuning parameters:
     ## 
     ##   interaction.depth  n.trees  RMSE      Rsquared     MAE     
-    ##   1                   25      7675.511  0.001623442  2984.307
-    ##   1                   50      7677.644  0.002248003  2980.624
-    ##   1                  100      7663.687  0.003897654  2973.389
-    ##   1                  150      7668.799  0.004222771  2965.731
-    ##   1                  200      7670.919  0.004624101  2966.729
-    ##   1                  250      7673.796  0.004574173  2972.924
-    ##   2                   25      7667.371  0.004281103  2977.906
-    ##   2                   50      7665.057  0.005730841  2969.847
-    ##   2                  100      7683.244  0.006281649  2986.228
-    ##   2                  150      7692.433  0.006551915  2983.730
-    ##   2                  200      7702.688  0.006727955  3002.972
-    ##   2                  250      7703.894  0.006629299  3004.502
-    ##   3                   25      7679.780  0.004692563  2995.435
-    ##   3                   50      7699.477  0.005576263  2997.946
-    ##   3                  100      7731.382  0.005825901  3016.091
-    ##   3                  150      7777.480  0.004640207  3054.139
-    ##   3                  200      7803.416  0.004427323  3076.974
-    ##   3                  250      7861.564  0.003312166  3125.318
-    ##   4                   25      7703.025  0.003571586  2996.944
-    ##   4                   50      7744.665  0.004487602  3012.707
-    ##   4                  100      7806.563  0.004574995  3047.849
-    ##   4                  150      7870.150  0.004145567  3106.538
-    ##   4                  200      7918.236  0.003510249  3160.308
-    ##   4                  250      7950.387  0.003732412  3198.517
-    ##   5                   25      7713.377  0.003290994  2994.514
-    ##   5                   50      7766.228  0.003324415  3026.293
-    ##   5                  100      7861.682  0.002781991  3091.654
-    ##   5                  150      7927.205  0.002452849  3155.525
-    ##   5                  200      7979.776  0.002316107  3222.314
-    ##   5                  250      8007.899  0.002335191  3269.750
+    ##   1                   25      7674.499  0.002050739  2987.937
+    ##   1                   50      7673.313  0.002208481  2977.440
+    ##   1                  100      7683.850  0.003181025  2981.274
+    ##   1                  150      7669.517  0.004116853  2972.606
+    ##   1                  200      7667.859  0.004542849  2980.651
+    ##   1                  250      7663.040  0.005391222  2963.899
+    ##   2                   25      7665.933  0.004239011  2976.448
+    ##   2                   50      7671.026  0.005476362  2972.206
+    ##   2                  100      7689.812  0.005519002  2983.511
+    ##   2                  150      7701.333  0.005689865  2984.035
+    ##   2                  200      7714.843  0.005132785  2999.384
+    ##   2                  250      7726.844  0.005301718  3008.122
+    ##   3                   25      7685.698  0.003292879  2985.982
+    ##   3                   50      7708.280  0.004092520  2993.940
+    ##   3                  100      7753.102  0.003630440  3017.964
+    ##   3                  150      7803.863  0.002951750  3051.952
+    ##   3                  200      7829.580  0.002878124  3074.407
+    ##   3                  250      7881.279  0.002662101  3117.948
+    ##   4                   25      7709.895  0.002579560  2993.667
+    ##   4                   50      7753.952  0.002833271  3006.951
+    ##   4                  100      7838.935  0.002100760  3055.129
+    ##   4                  150      7896.931  0.001772223  3107.590
+    ##   4                  200      7932.318  0.002088517  3151.646
+    ##   4                  250      7975.967  0.002195975  3209.952
+    ##   5                   25      7716.129  0.002661492  2992.111
+    ##   5                   50      7784.849  0.002166497  3032.418
+    ##   5                  100      7861.603  0.002104160  3079.518
+    ##   5                  150      7931.262  0.001764055  3140.843
+    ##   5                  200      7998.388  0.001459275  3221.424
+    ##   5                  250      8051.507  0.001430277  3293.088
     ## 
     ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
     ## 
     ## Tuning parameter 'n.minobsinnode' was held constant at a value of 10
     ## RMSE was used to select the optimal model using the smallest value.
-    ## The final values used for the model were n.trees = 100, interaction.depth =
+    ## The final values used for the model were n.trees = 250, interaction.depth =
     ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
 
 ``` r
@@ -745,13 +729,132 @@ data.frame(Regression = regmod.rmse,
            Boosted.tree = boosted.rmse)
 ```
 
-    ##      Regression   Forest Pol.regression Boosted.tree
-    ## RMSE   7969.713 7951.099       7987.876     7996.108
-
 The **random forest** model has the lowest root mean squared error of
 all four models, with a value of **7951.099**, hence is our winner
 model.
 
 # Automation
+
+\#get channels’ name
+
+``` r
+mydata <- read_csv("OnlineNewsPopularity.csv")
+
+data <- mydata %>%
+          pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'channel',values_to = 'logi.num.d')
+
+data1 <- data %>% 
+          filter(logi.num.d !=0) %>%
+          select(-logi.num.d) 
+
+data2 <- data1 %>%
+          pivot_longer(cols=weekday_is_monday:weekday_is_sunday, names_to = 'weekday',values_to = 'logi.num.w') 
+  
+data3 <- data2 %>%
+          filter(logi.num.w!=0) %>%
+          select(-logi.num.w)
+
+channels <- unique(data3$channel)
+          
+output_file <- paste0(channels,".md")
+
+
+#create a list for each channel with just the channel name parameter
+
+params = lapply(channels, FUN = function(x){list(channel = x)})
+
+
+#put into a data frame
+reports <- tibble::tibble(output_file, params); reports
+
+#need to use x[[1]] to get at elements since tibble doesn't simplify
+apply(reports, MARGIN = 1,FUN = function(x){
+
+render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
+
+})
+```
+
+``` r
+channels <- c("data_channel_is_lifestyle", "data_channel_is_entertainment", "data_channel_is_bus", "data_channel_is_socmed", "data_channel_is_tech", "data_channel_is_world")
+
+# Create file names
+
+#name <- c("Lifestyle", "Entertainment", "Business", "SocialMedia",
+
+         # "Tech", "World")
+
+output_file <- paste0(channels,".md")
+
+# Create a list for each channel with just channel name parameter
+
+ params = lapply(channels, FUN = function(x){
+ 
+   return(list(chan = x))
+
+})
+
+# Put into a data frame
+
+reports = tibble(channels, output_file, params);reports
+```
+
+    ## # A tibble: 6 x 3
+    ##   channels                      output_file                      params      
+    ##   <chr>                         <chr>                            <list>      
+    ## 1 data_channel_is_lifestyle     data_channel_is_lifestyle.md     <named list>
+    ## 2 data_channel_is_entertainment data_channel_is_entertainment.md <named list>
+    ## 3 data_channel_is_bus           data_channel_is_bus.md           <named list>
+    ## 4 data_channel_is_socmed        data_channel_is_socmed.md        <named list>
+    ## 5 data_channel_is_tech          data_channel_is_tech.md          <named list>
+    ## 6 data_channel_is_world         data_channel_is_world.md         <named list>
+
+``` r
+# Automation
+
+apply(reports, MARGIN = 1, FUN = function(x){
+
+render(input = "Project3.Rmd",
+
+                    #output_format = "github_document",
+
+                    output_file = x[[2]],
+
+                    params = x[[3]])
+                    #params = list(chan = chan, name = name),
+
+                    #output_options = list(html_preview = FALSE)
+
+})
+```
+
+``` r
+mydata <-read_csv("OnlineNewsPopularity.csv")
+params$chan
+
+mydat <- mydata %>% 
+        select( data_channel_is_lifestyle:data_channel_is_world) %>%
+        # filter((data_channel_is_lifestyle == 1) & (data_channel_is_entertainment == 1) & (data_channel_is_bus == 1) & (data_channel_is_socmed == 1) & (data_channel_is_tech == 1) & (data_channel_is_world == 1) ) 
+        pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'ch', values_to = 'val') %>%
+  filter(val == 1)
+ 
+mydat
+
+channels <- unique(mydat$ch)
+output_file <- paste0(channels,'.md')
+
+params <- lapply(channels, FUN = function(x){list(chan = x)})
+
+
+#put into a data frame
+reports <- tibble(output_file, params); reports
+
+#need to use x[[1]] to get at elements since tibble doesn't simplify
+apply(reports, MARGIN = 1,FUN = function(x){
+
+render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
+
+})
+```
 
 # Conclusion
