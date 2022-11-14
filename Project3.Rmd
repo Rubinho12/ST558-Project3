@@ -6,7 +6,7 @@ output:
   github_document:
     toc: true
 #params: 
-   #chan: 'data_channel_is_entertainment'
+ # chan: 'data_channel_is_entertainment'
     
     
 ---
@@ -327,12 +327,6 @@ boosted_fit <- train(shares ~., data = train.set, method = "gbm",
                        verbose = FALSE)
 boosted_fit
 
-
-# boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
-# 
-# boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
-# 
-# boostRMSE
 ```
 
 
@@ -376,7 +370,7 @@ data.frame(Regression = regmod.rmse,
 
 # Automation
 
-#get channels' name
+
 ```{r, eval = F}
 mydata <- read_csv("OnlineNewsPopularity.csv")
 
@@ -442,7 +436,7 @@ reports = tibble(channels, output_file, params);reports
 ```
 
 
-```{r,eval=F}
+```{r,eval=T}
 # Automation
 
 apply(reports, MARGIN = 1, FUN = function(x){
@@ -466,7 +460,7 @@ render(input = "Project3.Rmd",
 
 ```{r,eval=F}
 mydata <-read_csv("OnlineNewsPopularity.csv")
-params$chan
+
 
 mydat <- mydata %>% 
         select( data_channel_is_lifestyle:data_channel_is_world) %>%
@@ -479,8 +473,10 @@ mydat
 channels <- unique(mydat$ch)
 output_file <- paste0(channels,'.md')
 
-params <- lapply(channels, FUN = function(x){list(chan = x)})
-
+params = lapply(channels, FUN = function(x){
+  
+  return(list(chan = x))
+})
 
 #put into a data frame
 reports <- tibble(output_file, params); reports
@@ -491,6 +487,13 @@ apply(reports, MARGIN = 1,FUN = function(x){
 render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
 
 })
+```
+
+```{r render, echo=TRUE, eval=T}
+rmarkdown::render(input = "Project3.Rmd", 
+                  output_file = x[[2]], 
+                  output_format = "github_document",
+                  params = list(Channels = 'data_channel_is_entertainment'))
 ```
 
 # Conclusion

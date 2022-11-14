@@ -735,8 +735,6 @@ model.
 
 # Automation
 
-\#get channels’ name
-
 ``` r
 mydata <- read_csv("OnlineNewsPopularity.csv")
 
