@@ -50,7 +50,7 @@ rmarkdown::render(input = "Project3.Rmd",
 })
 ```
 
-Here are the the reports that are generated for each day:
+Reports for each channel:
 
 -   [Entertainment channel analysis](Project3.md).  
 -   [Lifestyle channel analysis](data_channel_is_lifestyle.md).
