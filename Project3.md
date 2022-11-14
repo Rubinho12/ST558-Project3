@@ -98,8 +98,9 @@ head(newsdata)
 ``` r
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
-        filter(data_channel_is_entertainment == 1) %>%
-       # filter(!!rlang::sym(params$channel) == 1) %>%
+        filter(params$chan == 1) %>%
+        #filter(data_channel_is_entertainment == 1) %>%
+        #filter(!!rlang::sym(params$channel) == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
@@ -114,33 +115,11 @@ newsdata$is_weekend <- factor(newsdata$is_weekend, levels = c(0,1), labels = c('
 print(newsdata, width = 100, n = 10)
 ```
 
-    ## # A tibble: 7,057 x 12
-    ##    n_tokens_content num_hrefs num_imgs num_videos weekday_is_monday
-    ##               <dbl>     <dbl>    <dbl>      <dbl> <fct>            
-    ##  1              219         4        1          0 It is Monday     
-    ##  2              531         9        1          0 It is Monday     
-    ##  3              194         4        0          1 It is Monday     
-    ##  4              161         5        0          6 It is Monday     
-    ##  5              454         5        1          0 It is Monday     
-    ##  6              177         4        1          0 It is Monday     
-    ##  7              356         3       12          1 It is Monday     
-    ##  8              281         5        1          0 Not Monday       
-    ##  9              909         3        1          1 Not Monday       
-    ## 10              413         6       13          0 Not Monday       
-    ##    weekday_is_saturday is_weekend    global_rat~1 globa~2 avg_p~3 avg_n~4 shares
-    ##    <fct>               <fct>                <dbl>   <dbl>   <dbl>   <dbl>  <dbl>
-    ##  1 Not Saturday        Not a weekend       0.0457  0.0137   0.379  -0.35     593
-    ##  2 Not Saturday        Not a weekend       0.0414  0.0207   0.386  -0.370   1200
-    ##  3 Not Saturday        Not a weekend       0.0567  0        0.545   0       2100
-    ##  4 Not Saturday        Not a weekend       0.0497  0.0186   0.427  -0.364   1200
-    ##  5 Not Saturday        Not a weekend       0.0441  0.0132   0.363  -0.215   4600
-    ##  6 Not Saturday        Not a weekend       0.0678  0.0113   0.417  -0.167   1200
-    ##  7 Not Saturday        Not a weekend       0.0618  0.0140   0.359  -0.373    631
-    ##  8 Not Saturday        Not a weekend       0.0463  0.0214   0.322  -0.278   1300
-    ##  9 Not Saturday        Not a weekend       0.0649  0.0220   0.381  -0.258   1700
-    ## 10 Not Saturday        Not a weekend       0.0412  0.0121   0.345  -0.408    455
-    ## # ... with 7,047 more rows, and abbreviated variable names 1: global_rate_positive_words,
-    ## #   2: global_rate_negative_words, 3: avg_positive_polarity, 4: avg_negative_polarity
+    ## # A tibble: 0 x 12
+    ## # ... with 12 variables: n_tokens_content <dbl>, num_hrefs <dbl>, num_imgs <dbl>, num_videos <dbl>,
+    ## #   weekday_is_monday <fct>, weekday_is_saturday <fct>, is_weekend <fct>,
+    ## #   global_rate_positive_words <dbl>, global_rate_negative_words <dbl>,
+    ## #   avg_positive_polarity <dbl>, avg_negative_polarity <dbl>, shares <dbl>
 
 # First group member’s summarizations
 
@@ -683,14 +662,6 @@ boosted_fit
     ## The final values used for the model were n.trees = 250, interaction.depth =
     ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
 
-``` r
-# boostPred <- predict(boosted_fit, newdata = dplyr::select(test.set, -shares), n.trees = 5000)
-# 
-# boostRMSE <- sqrt(mean((boostPred-test.set$shares)^2))
-# 
-# boostRMSE
-```
-
 # Comparison of the four models
 
 We will predict the four models fitted above on the test set and use the
@@ -797,16 +768,6 @@ output_file <- paste0(channels,".md")
 reports = tibble(channels, output_file, params);reports
 ```
 
-    ## # A tibble: 6 x 3
-    ##   channels                      output_file                      params      
-    ##   <chr>                         <chr>                            <list>      
-    ## 1 data_channel_is_lifestyle     data_channel_is_lifestyle.md     <named list>
-    ## 2 data_channel_is_entertainment data_channel_is_entertainment.md <named list>
-    ## 3 data_channel_is_bus           data_channel_is_bus.md           <named list>
-    ## 4 data_channel_is_socmed        data_channel_is_socmed.md        <named list>
-    ## 5 data_channel_is_tech          data_channel_is_tech.md          <named list>
-    ## 6 data_channel_is_world         data_channel_is_world.md         <named list>
-
 ``` r
 # Automation
 
@@ -828,7 +789,7 @@ render(input = "Project3.Rmd",
 
 ``` r
 mydata <-read_csv("OnlineNewsPopularity.csv")
-params$chan
+
 
 mydat <- mydata %>% 
         select( data_channel_is_lifestyle:data_channel_is_world) %>%
@@ -841,8 +802,10 @@ mydat
 channels <- unique(mydat$ch)
 output_file <- paste0(channels,'.md')
 
-params <- lapply(channels, FUN = function(x){list(chan = x)})
-
+params = lapply(channels, FUN = function(x){
+  
+  return(list(chan = x))
+})
 
 #put into a data frame
 reports <- tibble(output_file, params); reports
@@ -853,6 +816,13 @@ apply(reports, MARGIN = 1,FUN = function(x){
 render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
 
 })
+```
+
+``` r
+rmarkdown::render(input = "Project3.Rmd", 
+                  output_file = x[[2]], 
+                  output_format = "github_document",
+                  params = list(Channels = 'data_channel_is_entertainment'))
 ```
 
 # Conclusion
