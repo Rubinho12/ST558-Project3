@@ -78,9 +78,9 @@ head(newsdata)
 ``` r
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
-        filter(params$chan == 1) %>%
+        #filter(params$chan == 1) %>%
         #filter(data_channel_is_entertainment == 1) %>%
-        #filter(!!rlang::sym(params$channel) == 1) %>%
+        filter(rlang::sym(params$chan) == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
 
 
