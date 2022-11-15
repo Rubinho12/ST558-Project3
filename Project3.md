@@ -708,132 +708,35 @@ model.
 # Automation
 
 ``` r
-mydata <- read_csv("OnlineNewsPopularity.csv")
-
-data <- mydata %>%
-          pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'channel',values_to = 'logi.num.d')
-
-data1 <- data %>% 
-          filter(logi.num.d !=0) %>%
-          select(-logi.num.d) 
-
-data2 <- data1 %>%
-          pivot_longer(cols=weekday_is_monday:weekday_is_sunday, names_to = 'weekday',values_to = 'logi.num.w') 
-  
-data3 <- data2 %>%
-          filter(logi.num.w!=0) %>%
-          select(-logi.num.w)
-
-channels <- unique(data3$channel)
-          
-output_file <- paste0(channels,".md")
-
-
-#create a list for each channel with just the channel name parameter
-
-params = lapply(channels, FUN = function(x){list(channel = x)})
-
-
-#put into a data frame
-reports <- tibble::tibble(output_file, params); reports
-
-#need to use x[[1]] to get at elements since tibble doesn't simplify
-apply(reports, MARGIN = 1,FUN = function(x){
-
-render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
-
-})
-```
-
-``` r
 channels <- c("data_channel_is_lifestyle", "data_channel_is_entertainment", "data_channel_is_bus", "data_channel_is_socmed", "data_channel_is_tech", "data_channel_is_world")
 
-# Create file names
-
-#name <- c("Lifestyle", "Entertainment", "Business", "SocialMedia",
-
-         # "Tech", "World")
-
+## Files
 output_file <- paste0(channels,".md")
 
-# Create a list for each channel with just channel name parameter
-
+## Create a list for each channel with just channel name parameter
  params = lapply(channels, FUN = function(x){
  
    return(list(chan = x))
 
 })
-
-# Put into a data frame
-
+## Put into a data frame
 reports = tibble(channels, output_file, params);reports
-```
 
-``` r
-# Automation
+## Automation
 
 apply(reports, MARGIN = 1, FUN = function(x){
 
-render(input = "Project3.Rmd",
+  rmarkdown::render(input = "Project3.Rmd",
 
-                    #output_format = "github_document",
+                    output_format = "github_document",
 
                     output_file = x[[2]],
 
-                    params = x[[3]])
-                    #params = list(chan = chan, name = name),
+                    params = x[[3]],
 
-                    #output_options = list(html_preview = FALSE)
+                    output_options = list(html_preview = FALSE))
 
 })
-```
-
-``` r
-mydata <-read_csv("OnlineNewsPopularity.csv")
-
-
-mydat <- mydata %>% 
-        select( data_channel_is_lifestyle:data_channel_is_world) %>%
-        # filter((data_channel_is_lifestyle == 1) & (data_channel_is_entertainment == 1) & (data_channel_is_bus == 1) & (data_channel_is_socmed == 1) & (data_channel_is_tech == 1) & (data_channel_is_world == 1) ) 
-        pivot_longer(cols = data_channel_is_lifestyle:data_channel_is_world, names_to = 'ch', values_to = 'val') %>%
-  filter(val == 1)
- 
-mydat
-```
-
-    ## # A tibble: 33,510 x 2
-    ##    ch                              val
-    ##    <chr>                         <dbl>
-    ##  1 data_channel_is_entertainment     1
-    ##  2 data_channel_is_bus               1
-    ##  3 data_channel_is_bus               1
-    ##  4 data_channel_is_entertainment     1
-    ##  5 data_channel_is_tech              1
-    ##  6 data_channel_is_tech              1
-    ##  7 data_channel_is_lifestyle         1
-    ##  8 data_channel_is_tech              1
-    ##  9 data_channel_is_tech              1
-    ## 10 data_channel_is_world             1
-    ## # ... with 33,500 more rows
-
-``` r
-# channels <- unique(mydat$ch)
-# output_file <- paste0(channels,'.md')
-# 
-# params = lapply(channels, FUN = function(x){
-# 
-#   return(list(chan = x))
-# })
-# 
-# #put into a data frame
-# reports <- tibble(output_file, params); reports
-# 
-# #need to use x[[1]] to get at elements since tibble doesn't simplify
-# apply(reports, MARGIN = 1,FUN = function(x){
-# 
-# render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
-# 
-# })
 ```
 
 ``` r
@@ -842,5 +745,3 @@ rmarkdown::render(input = "Project3.Rmd",
                   output_format = "github_document",
                   params = list(Channels = 'data_channel_is_entertainment'))
 ```
-
-# Conclusion
