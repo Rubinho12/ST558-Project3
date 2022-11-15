@@ -164,24 +164,24 @@ table(newsdata$is_weekend, newsdata$weekday_is_saturday)
     ##   Not a weekend         6141              0
     ##   Weekend                536            380
 
--   From the numerical summaries, the results show that there is an
-    average of 607 words in the content, an average of 6 images and 3
-    videos. The standard deviation of the positive words from the mean
-    is 0.0169 and the number of links varies by a average amount of 167.
+- From the numerical summaries, the results show that there is an
+  average of 607 words in the content, an average of 6 images and 3
+  videos. The standard deviation of the positive words from the mean is
+  0.0169 and the number of links varies by a average amount of 167.
 
--   The one way contingency table tells us that the number of articles
-    published on Monday is less compared to the number of articles that
-    is not published on Monday, 1358 versus 5699.
+- The one way contingency table tells us that the number of articles
+  published on Monday is less compared to the number of articles that is
+  not published on Monday, 1358 versus 5699.
 
--   From the two ways contingency tables, 536 articles are published
-    during the weekend, but it is not on Saturday. The amount of
-    articles published on Saturday is 380. A total number of 6141
-    articles are not published during the weekend.
+- From the two ways contingency tables, 536 articles are published
+  during the weekend, but it is not on Saturday. The amount of articles
+  published on Saturday is 380. A total number of 6141 articles are not
+  published during the weekend.
 
 #### <u>2) Graphs</u>
 
--   **Scatter plot of the rate of positive words in the content and the
-    number of shares**
+- **Scatter plot of the rate of positive words in the content and the
+  number of shares**
 
 ``` r
 g <- ggplot(newsdata, aes(x = global_rate_positive_words, y = shares))
@@ -201,7 +201,7 @@ A negative relationship between the two variables is shown by a downward
 trend that tells us that people share less contents that have lots of
 positive words.
 
--   **Density plot**
+- **Density plot**
 
 ``` r
 g <- ggplot(newsdata, aes(x = global_rate_negative_words)) 
@@ -221,7 +221,7 @@ distributed, about average.
 
 <br>
 
--   **Dotplot**
+- **Dotplot**
 
 ``` r
 g <- ggplot(newsdata, aes(x = is_weekend, y = shares)) 
@@ -231,18 +231,18 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
 
 ![](Project3_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
--   Similarly to a boxplot, dotplots can be used to visualize the five
-    number summary of a numeric data. Here , we are trying to see
-    graphically the number of contents shared during the weekday and the
-    weekend. We would expect the minimum number to be 0, since a the
-    least amount of contents that can be shared can’t go below 0.
+- Similarly to a boxplot, dotplots can be used to visualize the five
+  number summary of a numeric data. Here , we are trying to see
+  graphically the number of contents shared during the weekday and the
+  weekend. We would expect the minimum number to be 0, since a the least
+  amount of contents that can be shared can’t go below 0.
 
--   A greater number of points, for example in the ‘Not weekend’ group
-    states that more articles are shared during the week days compared
-    the weekend. The opposite would mean that contents are shared more
-    during the weekend.
+- A greater number of points, for example in the ‘Not weekend’ group
+  states that more articles are shared during the week days compared the
+  weekend. The opposite would mean that contents are shared more during
+  the weekend.
 
--   Points that are far away from the rest indicates possible outliers.
+- Points that are far away from the rest indicates possible outliers.
 
 # First group member’s modeling
 
@@ -252,7 +252,7 @@ evaluated on the test set. The two models that will be fit are a
 **linear regression model** and a **random forest model**, using
 cross-validation.
 
--   **What is linear regression about ?**
+- **What is linear regression about ?**
 
 Linear regression (LR) is the simplest form of a supervised machine
 learning, where the data has both a single (simple linear regression) or
@@ -272,7 +272,7 @@ response, is the relationship linear or non-linear, are the predictors
 correlated? Those are some important questions one can answers with the
 use of linear regression.
 
--   **What is random forest about ?**
+- **What is random forest about ?**
 
 Random forest (RF) is supervised statistical machine learning algorithm
 , constructed from decision trees, that is used in regression and
