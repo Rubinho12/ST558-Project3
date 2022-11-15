@@ -1,6 +1,6 @@
 ---
 title: "Project3"
-author: "Ruben Sowah and  Zhiyuan Yang"
+author: "Ruben Sowah,Zhiyuan Yang"
 date: "2022-10-30"
 output: rmarkdown::github_document
 params: 
@@ -55,9 +55,7 @@ head(newsdata)
 
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
-        #filter(params$chan == 1) %>%
         filter(!!rlang::sym(params$chan) == 1) %>%
-       # filter(data_channel_is_entertainment == 1 ,data_channel_is_world == 1) %>%
         select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares)#,data_channel_is_entertainment,data_channel_is_world) 
         
 ## Coerce the categorical variables into factor
@@ -399,15 +397,6 @@ apply(reports, MARGIN = 1, FUN = function(x){
                     output_options = list(html_preview = FALSE))
 
 })
-```
-
-
-
-```{r render, echo=TRUE, eval=F}
-rmarkdown::render(input = "Project3.Rmd", 
-                  output_file = x[[2]], 
-                  output_format = "github_document",
-                  params = list(Channels = 'data_channel_is_entertainment'))
 ```
 
 
