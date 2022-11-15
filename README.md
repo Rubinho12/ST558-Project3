@@ -1,7 +1,17 @@
-README
+Project3 README
 ================
 Ruben Sowah, Zhiyuan Yang
 2022-11-14
+
+# README code
+
+``` r
+rmarkdown::render("Project3~README.Rmd", 
+          output_format = "github_document",
+          output_file = "README.md",
+          output_options = list(
+            html_preview = FALSE))
+```
 
 # Automation code
 

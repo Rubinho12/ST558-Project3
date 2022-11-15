@@ -1,5 +1,5 @@
 ---
-title: "README"
+title: "Project3 README"
 author: "Ruben Sowah, Zhiyuan Yang"
 date: "2022-11-14"
 output: rmarkdown::github_document
@@ -11,6 +11,15 @@ library(dplyr)
 library(knitr)
 ```
 
+
+# README code
+```{r render, echo=TRUE, eval=FALSE}
+rmarkdown::render("Project3~README.Rmd", 
+          output_format = "github_document",
+          output_file = "README.md",
+          output_options = list(
+            html_preview = FALSE))
+```
 
 # Automation code
 ```{r, echo = T , eval = F}
