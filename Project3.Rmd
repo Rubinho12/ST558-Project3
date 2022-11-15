@@ -56,11 +56,10 @@ head(newsdata)
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
         #filter(params$chan == 1) %>%
-        #filter(data_channel_is_entertainment == 1) %>%
-        filter(rlang::sym(params$chan) == 1) %>%
-        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares) 
-
-
+        filter(!!rlang::sym(params$chan) == 1) %>%
+       # filter(data_channel_is_entertainment == 1 ,data_channel_is_world == 1) %>%
+        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares)#,data_channel_is_entertainment,data_channel_is_world) 
+        
 ## Coerce the categorical variables into factor
 newsdata$weekday_is_monday <- factor(newsdata$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
 
@@ -457,7 +456,7 @@ render(input = "Project3.Rmd",
 ```
 
 
-```{r,eval=F}
+```{r,eval=T}
 mydata <-read_csv("OnlineNewsPopularity.csv")
 
 
@@ -469,23 +468,23 @@ mydat <- mydata %>%
  
 mydat
 
-channels <- unique(mydat$ch)
-output_file <- paste0(channels,'.md')
-
-params = lapply(channels, FUN = function(x){
-  
-  return(list(chan = x))
-})
-
-#put into a data frame
-reports <- tibble(output_file, params); reports
-
-#need to use x[[1]] to get at elements since tibble doesn't simplify
-apply(reports, MARGIN = 1,FUN = function(x){
-
-render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
-
-})
+# channels <- unique(mydat$ch)
+# output_file <- paste0(channels,'.md')
+# 
+# params = lapply(channels, FUN = function(x){
+# 
+#   return(list(chan = x))
+# })
+# 
+# #put into a data frame
+# reports <- tibble(output_file, params); reports
+# 
+# #need to use x[[1]] to get at elements since tibble doesn't simplify
+# apply(reports, MARGIN = 1,FUN = function(x){
+# 
+# render(input = "./Project3.Rmd", output_file = x[[1]], params = x[[2]], output_format = "github_document",)
+# 
+# })
 ```
 
 ```{r render, echo=TRUE, eval=F}
