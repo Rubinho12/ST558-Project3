@@ -3,9 +3,20 @@ Project3 README
 Ruben Sowah, Zhiyuan Yang
 2022-11-14
 
-# Packages
+# Purpose of the repository
 
-# README code
+# List of R Packages used
+
+tidyverse  
+caret  
+Metrics  
+ggplot2  
+readr  
+rsample  
+randomForest  
+rmarkdown
+
+# README render code
 
 ``` r
 rmarkdown::render("Project3_README.Rmd", 
@@ -15,7 +26,18 @@ rmarkdown::render("Project3_README.Rmd",
             html_preview = FALSE))
 ```
 
-# Set up parameters for the automation code
+# Links to the generated analyses:
+
+- [Entertainment channel analysis](data_channel_is_entertainment.md).  
+- [Lifestyle channel analysis](data_channel_is_lifestyle.md).
+- [Business channel analysis](data_channel_is_bus.md).
+- [Social media channel analysis](data_channel_is_socmed.md).
+- [Technology channel analysis](data_channel_is_tech.md).
+- [World channel analysis](data_channel_is_world.md).
+
+# Code used to create the analyses
+
+- **Set up parameters for the automation code, print the reports**
 
 ``` r
 channels <- c("data_channel_is_lifestyle", "data_channel_is_entertainment", "data_channel_is_bus", "data_channel_is_socmed", "data_channel_is_tech", "data_channel_is_world")
@@ -43,7 +65,7 @@ reports = tibble(channels, output_file, params);reports
     ## 5 data_channel_is_tech          data_channel_is_tech.md          <named list>
     ## 6 data_channel_is_world         data_channel_is_world.md         <named list>
 
-# Automation code
+- **Automation of the code**
 
 ``` r
 ## Automation
@@ -61,12 +83,3 @@ apply(reports, MARGIN = 1, FUN = function(x){
 
 })
 ```
-
-# Reports for each channel:
-
-- [Entertainment channel analysis](data_channel_is_entertainment.md).  
-- [Lifestyle channel analysis](data_channel_is_lifestyle.md).
-- [Business channel analysis](data_channel_is_bus.md).
-- [Social media channel analysis](data_channel_is_socmed.md).
-- [Technology channel analysis](data_channel_is_tech.md).
-- [World channel analysis](data_channel_is_world.md).

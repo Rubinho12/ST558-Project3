@@ -1,19 +1,30 @@
 ---
 title: "Project3 README"
-author: "Ruben Sowah, Zhiyuan Yang"
+author: "Ruben Sowah, Zhiyuan Yang"  
 date: "2022-11-14"
 output: rmarkdown::github_document
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, warning = F, message = F, cache = T)
-library(dplyr)
-library(knitr)
 ```
 
-# Packages
+# Purpose of the repository
 
-# README code
+# List of R Packages used 
+
+tidyverse  
+caret  
+Metrics  
+ggplot2  
+readr  
+rsample  
+randomForest  
+rmarkdown  
+
+
+
+# README render code
 ```{r render, echo=TRUE, eval=F}
 rmarkdown::render("Project3_README.Rmd", 
           output_format = "github_document",
@@ -22,7 +33,19 @@ rmarkdown::render("Project3_README.Rmd",
             html_preview = FALSE))
 ```
 
-# Set up parameters for the automation code
+# Links to the generated analyses:   
+
+* [Entertainment channel analysis](data_channel_is_entertainment.md).  
+* [Lifestyle channel analysis](data_channel_is_lifestyle.md). 
+* [Business channel analysis](data_channel_is_bus.md). 
+* [Social media channel analysis](data_channel_is_socmed.md). 
+* [Technology channel analysis](data_channel_is_tech.md). 
+* [World channel analysis](data_channel_is_world.md). 
+
+
+# Code used to create the analyses
+
+  * __Set up parameters for the automation code, print the reports__
 ```{r, echo = T , eval = T}
 channels <- c("data_channel_is_lifestyle", "data_channel_is_entertainment", "data_channel_is_bus", "data_channel_is_socmed", "data_channel_is_tech", "data_channel_is_world")
 
@@ -39,7 +62,7 @@ output_file <- paste0(channels,".md")
 reports = tibble(channels, output_file, params);reports
 ```
 
-# Automation code
+  * __Automation of the code__
 ```{r, eval=F}
 ## Automation
 apply(reports, MARGIN = 1, FUN = function(x){
@@ -57,12 +80,5 @@ apply(reports, MARGIN = 1, FUN = function(x){
 })
 ```
 
-# Reports for each channel:   
 
-* [Entertainment channel analysis](data_channel_is_entertainment.md).  
-* [Lifestyle channel analysis](data_channel_is_lifestyle.md). 
-* [Business channel analysis](data_channel_is_bus.md). 
-* [Social media channel analysis](data_channel_is_socmed.md). 
-* [Technology channel analysis](data_channel_is_tech.md). 
-* [World channel analysis](data_channel_is_world.md). 
   
