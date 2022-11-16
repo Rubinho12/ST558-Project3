@@ -3,6 +3,9 @@ Project3
 Ruben Sowah, Zhiyuan Yang
 2022-10-30
 
+- <a href="#data_channel_is_tech-s-analysis"
+  id="toc-data_channel_is_tech-s-analysis"><strong>DATA_CHANNEL_IS_TECH ’s
+  Analysis</strong></a>
 - <a href="#introduction" id="toc-introduction">Introduction</a>
 - <a href="#load-packages" id="toc-load-packages">Load packages</a>
 - <a href="#read-in-the-data" id="toc-read-in-the-data">Read in the
@@ -17,7 +20,7 @@ Ruben Sowah, Zhiyuan Yang
   id="toc-comparison-of-the-four-models">Comparison of the four models</a>
 - <a href="#automation" id="toc-automation">Automation</a>
 
-**DATA_CHANNEL_IS_TECH ’s Analysis**
+# **DATA_CHANNEL_IS_TECH ’s Analysis**
 
 # Introduction
 

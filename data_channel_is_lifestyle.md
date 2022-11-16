@@ -3,6 +3,9 @@ Project3
 Ruben Sowah, Zhiyuan Yang
 2022-10-30
 
+- <a href="#data_channel_is_lifestyle-s-analysis"
+  id="toc-data_channel_is_lifestyle-s-analysis"><strong>DATA_CHANNEL_IS_LIFESTYLE
+  ’s Analysis</strong></a>
 - <a href="#introduction" id="toc-introduction">Introduction</a>
 - <a href="#load-packages" id="toc-load-packages">Load packages</a>
 - <a href="#read-in-the-data" id="toc-read-in-the-data">Read in the
@@ -17,7 +20,7 @@ Ruben Sowah, Zhiyuan Yang
   id="toc-comparison-of-the-four-models">Comparison of the four models</a>
 - <a href="#automation" id="toc-automation">Automation</a>
 
-**DATA_CHANNEL_IS_LIFESTYLE ’s Analysis**
+# **DATA_CHANNEL_IS_LIFESTYLE ’s Analysis**
 
 # Introduction
 
@@ -149,7 +152,7 @@ g + geom_point(color = 'blue')+
   labs(title = 'Rate of positive words vs Number of shares')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 A scatter plot is used to visualize the relation between two numeric
 variables. A strong positive relationship between the rate of positive
@@ -169,7 +172,7 @@ g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
   labs(title = 'Density plot  of the rate of negative words in the article')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 A density plot can tell us about the distribution of a certain feature
 or the whole data. Here, we plot the density of the rate of negative
@@ -189,7 +192,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
 
 - Similarly to a boxplot, dotplots can be used to visualize the five
   number summary of a numeric data. Here , we are trying to see
@@ -249,7 +252,7 @@ ggplot(newsdata, aes(x=weekday_is_saturday))+
        title= "Weekend published article's Bar plot")
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 ***Comments:*** Based on the bar plot, we can see how many articles are
 published on Saturday.
 
@@ -268,7 +271,7 @@ ggplot(data = newsdata, aes(x = shares))+
                            labels = c("No", "Yes"))
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ***Comments:*** Based on this histogram, we can see the distribution of
 the number of shares. If the peak of the graph lies to the left side of
@@ -289,7 +292,7 @@ g + geom_point(color = 'green')+
   labs(title = 'number of tokens content vs Number of shares')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
 
 ***Comments:*** Based on this scatter plot, we can see how many points
 plotted in the Cartesian plane. Each point represents the values of
