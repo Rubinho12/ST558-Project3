@@ -485,7 +485,44 @@ forestmod <- train(shares ~ . ,
                    preProcess = c('center','scale'),
                    tuneGrid = forestgrid)
 forestmod
+```
 
+    ## Random Forest 
+    ## 
+    ## 4939 samples
+    ##   11 predictor
+    ## 
+    ## Pre-processing: centered (11), scaled (11) 
+    ## Resampling: Cross-Validated (5 fold) 
+    ## Summary of sample sizes: 3951, 3950, 3951, 3953, 3951 
+    ## Resampling results across tuning parameters:
+    ## 
+    ##   mtry  RMSE      Rsquared     MAE     
+    ##    1    7662.573  0.006767289  2965.183
+    ##    2    7728.594  0.006846902  3064.406
+    ##    3    7782.372  0.006305473  3136.581
+    ##    4    7829.162  0.006187047  3174.102
+    ##    5    7866.443  0.005553292  3198.280
+    ##    6    7876.528  0.006098975  3208.612
+    ##    7    7938.843  0.005061271  3241.934
+    ##    8    7949.646  0.005637773  3252.555
+    ##    9    7982.953  0.005834699  3264.846
+    ##   10    8020.909  0.005234610  3280.649
+    ##   11    8015.636  0.005405004  3278.159
+    ##   12    8037.008  0.005606974  3280.706
+    ##   13    8034.669  0.005293966  3281.193
+    ##   14    8046.959  0.005006641  3290.385
+    ##   15    8054.300  0.005331758  3281.366
+    ##   16    8009.050  0.005368976  3269.456
+    ##   17    8032.669  0.004977101  3287.320
+    ##   18    8040.374  0.005594010  3286.159
+    ##   19    8025.253  0.005517995  3286.353
+    ##   20    8033.340  0.005247934  3286.625
+    ## 
+    ## RMSE was used to select the optimal model using the smallest value.
+    ## The final value used for the model was mtry = 1.
+
+``` r
 ## Get the optimal tuned parameter
 mtry.opt <- forestmod$bestTune$mtry
 
@@ -651,46 +688,46 @@ boosted_fit
     ## 
     ## Pre-processing: centered (11), scaled (11) 
     ## Resampling: Cross-Validated (5 fold, repeated 3 times) 
-    ## Summary of sample sizes: 3951, 3951, 3950, 3953, 3951, 3951, ... 
+    ## Summary of sample sizes: 3951, 3950, 3950, 3953, 3952, 3952, ... 
     ## Resampling results across tuning parameters:
     ## 
     ##   interaction.depth  n.trees  RMSE      Rsquared     MAE     
-    ##   1                   25      7674.499  0.002050739  2987.937
-    ##   1                   50      7673.313  0.002208481  2977.440
-    ##   1                  100      7683.850  0.003181025  2981.274
-    ##   1                  150      7669.517  0.004116853  2972.606
-    ##   1                  200      7667.859  0.004542849  2980.651
-    ##   1                  250      7663.040  0.005391222  2963.899
-    ##   2                   25      7665.933  0.004239011  2976.448
-    ##   2                   50      7671.026  0.005476362  2972.206
-    ##   2                  100      7689.812  0.005519002  2983.511
-    ##   2                  150      7701.333  0.005689865  2984.035
-    ##   2                  200      7714.843  0.005132785  2999.384
-    ##   2                  250      7726.844  0.005301718  3008.122
-    ##   3                   25      7685.698  0.003292879  2985.982
-    ##   3                   50      7708.280  0.004092520  2993.940
-    ##   3                  100      7753.102  0.003630440  3017.964
-    ##   3                  150      7803.863  0.002951750  3051.952
-    ##   3                  200      7829.580  0.002878124  3074.407
-    ##   3                  250      7881.279  0.002662101  3117.948
-    ##   4                   25      7709.895  0.002579560  2993.667
-    ##   4                   50      7753.952  0.002833271  3006.951
-    ##   4                  100      7838.935  0.002100760  3055.129
-    ##   4                  150      7896.931  0.001772223  3107.590
-    ##   4                  200      7932.318  0.002088517  3151.646
-    ##   4                  250      7975.967  0.002195975  3209.952
-    ##   5                   25      7716.129  0.002661492  2992.111
-    ##   5                   50      7784.849  0.002166497  3032.418
-    ##   5                  100      7861.603  0.002104160  3079.518
-    ##   5                  150      7931.262  0.001764055  3140.843
-    ##   5                  200      7998.388  0.001459275  3221.424
-    ##   5                  250      8051.507  0.001430277  3293.088
+    ##   1                   25      7612.121  0.001898137  2972.085
+    ##   1                   50      7607.547  0.002581440  2973.005
+    ##   1                  100      7606.984  0.003340745  2967.942
+    ##   1                  150      7610.897  0.003863266  2973.078
+    ##   1                  200      7617.104  0.004205915  2970.450
+    ##   1                  250      7609.907  0.004807406  2970.543
+    ##   2                   25      7609.865  0.003807208  2974.216
+    ##   2                   50      7608.680  0.005685139  2969.112
+    ##   2                  100      7624.823  0.006215906  2979.289
+    ##   2                  150      7641.033  0.005935260  2988.177
+    ##   2                  200      7650.695  0.005388972  2997.056
+    ##   2                  250      7670.343  0.004806589  3008.559
+    ##   3                   25      7626.008  0.003540068  2976.926
+    ##   3                   50      7664.014  0.003990396  3001.323
+    ##   3                  100      7709.140  0.003669220  3031.647
+    ##   3                  150      7749.877  0.003282062  3066.460
+    ##   3                  200      7784.597  0.002899168  3101.711
+    ##   3                  250      7827.824  0.002807265  3143.927
+    ##   4                   25      7649.310  0.002492424  2992.774
+    ##   4                   50      7698.595  0.002922617  3023.604
+    ##   4                  100      7781.106  0.002875854  3077.726
+    ##   4                  150      7847.264  0.002309787  3132.030
+    ##   4                  200      7886.850  0.002299250  3179.235
+    ##   4                  250      7921.506  0.002407549  3229.282
+    ##   5                   25      7669.772  0.002641186  3001.483
+    ##   5                   50      7739.199  0.002475223  3032.042
+    ##   5                  100      7825.464  0.002442252  3093.695
+    ##   5                  150      7887.130  0.002269362  3168.787
+    ##   5                  200      7964.650  0.002013015  3246.771
+    ##   5                  250      8006.335  0.001902974  3303.890
     ## 
     ## Tuning parameter 'shrinkage' was held constant at a value of 0.1
     ## 
     ## Tuning parameter 'n.minobsinnode' was held constant at a value of 10
     ## RMSE was used to select the optimal model using the smallest value.
-    ## The final values used for the model were n.trees = 250, interaction.depth =
+    ## The final values used for the model were n.trees = 100, interaction.depth =
     ##  1, shrinkage = 0.1 and n.minobsinnode = 10.
 
 # Comparison of the four models
@@ -725,16 +762,18 @@ boosted.pred <- predict(boosted_fit, newdata = test.set)
 boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
 
 ## Combine the four RMSE in a table
-k <- kable(data.frame(Regression = regmod.rmse,
-                      Random Forest = forest.rmse,
-                      Polynomial regression = regmod2.rmse,
-                      Boosted tree = boosted.rmse))
-k
-names(k)
+kable(data.frame(Regression = regmod.rmse,
+                      Random.Forest = forest.rmse,
+                      Polynomial.Regression = regmod2.rmse,
+                      Boosted.tree = boosted.rmse))
 ```
 
-The **random forest** model has the lowest root mean squared error of
-all four models, with a value of **7951.099**, hence is our winner
+|      | Regression | Random.Forest | Polynomial.Regression | Boosted.tree |
+|:-----|-----------:|--------------:|----------------------:|-------------:|
+| RMSE |   7969.713 |      7956.448 |              7987.876 |     7980.722 |
+
+The **Random.Forest** model has the lowest root mean squared error of
+all four models, with a value of **7956.448**, hence is our winner
 model.
 
 # Automation

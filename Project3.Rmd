@@ -256,7 +256,7 @@ summary(regmod)
 #### [__2) Fit a random forest model__]{.underline} 
 
   Here a random forest model will be fit on the train set using a cross-validation with 5 folds. We will use the expand.grid() function to select a range of parameters that will be tuned in our model. The optimal parameter that minimizes th error will be chosen and the model will be refit on the train set using that optimal parameter. We will also center and scale the train data for a more accurate distribution of the variables.  
-```{r, eval = F}
+```{r}
 ## Create a grid of tuning parameters
 forestgrid <- expand.grid(mtry = c(1:20))
 
@@ -338,7 +338,7 @@ boosted_fit
 
   We will predict the four models fitted above on the test set and use the postResample() function to get the test metrics. We are more concerned about the root mean squared error (RMSE) as the measure of our models.
   
-```{r,eval = F}
+```{r}
 ## Predict the multiple regression fit on the test set
 regmod.pred <- predict(regmod, newdata = test.set)
 
@@ -364,15 +364,22 @@ boosted.pred <- predict(boosted_fit, newdata = test.set)
 boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
 
 ## Combine the four RMSE in a table
-k <- kable(data.frame(Regression = regmod.rmse,
-                      Random Forest = forest.rmse,
-                      Polynomial regression = regmod2.rmse,
-                      Boosted tree = boosted.rmse))
-k
-names(k)
+kable(data.frame(Regression = regmod.rmse,
+                      Random.Forest = forest.rmse,
+                      Polynomial.Regression = regmod2.rmse,
+                      Boosted.tree = boosted.rmse))
 ```
 
-  The **random forest** model has the lowest root mean squared error of all four models, with a value of **7951.099**, hence is our winner model. 
+
+```{r, echo = F}
+d <- data.frame(Regression = regmod.rmse,
+                      Random.Forest = forest.rmse,
+                      Polynomial.Regression = regmod2.rmse,
+                      Boosted.tree = boosted.rmse)
+
+```
+
+  The __`r names(d)[which.min(d)]`__ model has the lowest root mean squared error of all four models, with a value of __`r round(min(d),3)`__, hence is our winner model. 
 
 
 # Automation
