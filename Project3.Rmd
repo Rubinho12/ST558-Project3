@@ -1,23 +1,23 @@
 ---
 title: "Project3"
-author: "Ruben Sowah,Zhiyuan Yang"
+author: "Ruben Sowah, Zhiyuan Yang"
 date: "2022-10-30"
 output: 
   github_document:
     toc: true
 params: 
-  chan: 'data_channel_is_entertainment'
+  chan: "data_channel_is_entertainment"
     
     
 ---
 
- 
+__`r toupper(params$chan)` 's Analysis__ 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,message  = F, warning = F, cache = T)
 ```
 
-`r toupper(params$chan)` Analysis
+
 
 # Introduction
 

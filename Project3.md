@@ -1,6 +1,6 @@
 Project3
 ================
-Ruben Sowah,Zhiyuan Yang
+Ruben Sowah, Zhiyuan Yang
 2022-10-30
 
 - <a href="#introduction" id="toc-introduction">Introduction</a>
@@ -17,7 +17,7 @@ Ruben Sowah,Zhiyuan Yang
   id="toc-comparison-of-the-four-models">Comparison of the four models</a>
 - <a href="#automation" id="toc-automation">Automation</a>
 
-DATA_CHANNEL_IS_ENTERTAINMENT Analysis
+**DATA_CHANNEL_IS_ENTERTAINMENT ’s Analysis**
 
 # Introduction
 
