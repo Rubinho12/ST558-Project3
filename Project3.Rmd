@@ -11,12 +11,13 @@ params:
     
 ---
 
-# `r toupper(params$chan)` Analysis
+ 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,message  = F, warning = F, cache = T)
 ```
 
+`r toupper(params$chan)` Analysis
 
 # Introduction
 
