@@ -1,5 +1,5 @@
 ---
-title: "Project3"
+title: "Project3" __`r toupper(params$chan)` 's Analysis__ 
 author: "Ruben Sowah, Zhiyuan Yang"
 date: "2022-10-30"
 output: 
@@ -11,7 +11,7 @@ params:
     
 ---
 
-__`r toupper(params$chan)` 's Analysis__ 
+# __`r toupper(params$chan)` 's Analysis__ 
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE,message  = F, warning = F, cache = T)
