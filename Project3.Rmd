@@ -157,6 +157,8 @@ Based on the contingency table, we can see how many articles are published on Sa
 
 #### [4) Graphs]{.underline}
 
+  * __Barplot of the day the article was published__
+
 ```{r}
 # Create bar plot to see whether the article was published on the Saturday
 
@@ -169,7 +171,7 @@ ggplot(newsdata, aes(x=weekday_is_saturday))+
 Based on the bar plot, we can see how many articles are published on Saturday.
 
 
-
+  * __Histogram of the number of shares vs the amount of articles published in the weekend__
 ```{r}
 # Create histogram to see number of shares and whether the article was published on the Weekend
 
@@ -193,6 +195,8 @@ the number of articles have small number of shares.
 The No means the articles were published on weekend. The Yes means
 the articles were published on weekend.
 
+
+ * __Scatter plot of the number of tokens content and the number of shares__
 ```{r}
 g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
 g + geom_point(color = 'green')+

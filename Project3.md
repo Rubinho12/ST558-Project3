@@ -295,6 +295,8 @@ on Saturday. 1 means articles are published on Saturday.
 
 #### <u>4) Graphs</u>
 
+- **Barplot of the day the article was published**
+
 ``` r
 # Create bar plot to see whether the article was published on the Saturday
 
@@ -307,6 +309,9 @@ ggplot(newsdata, aes(x=weekday_is_saturday))+
 ![](Project3_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
 ***Comments:*** Based on the bar plot, we can see how many articles are
 published on Saturday.
+
+- **Histogram of the number of shares vs the amount of articles
+  published in the weekend**
 
 ``` r
 # Create histogram to see number of shares and whether the article was published on the Weekend
@@ -331,6 +336,9 @@ shape, it means that the number of articles have large number of shares
 is similar with the number of articles have small number of shares. The
 No means the articles were published on weekend. The Yes means the
 articles were published on weekend.
+
+- **Scatter plot of the number of tokens content and the number of
+  shares**
 
 ``` r
 g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
