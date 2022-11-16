@@ -1,7 +1,23 @@
 Project3
 ================
-Ruben Sowah,Zhiyuan Yang
+Ruben Sowah, Zhiyuan Yang
 2022-10-30
+
+- <a href="#introduction" id="toc-introduction">Introduction</a>
+- <a href="#load-packages" id="toc-load-packages">Load packages</a>
+- <a href="#read-in-the-data" id="toc-read-in-the-data">Read in the
+  data</a>
+- <a href="#summarizations" id="toc-summarizations">Summarizations</a>
+  - <a href="#first-group-member" id="toc-first-group-member">First group
+    member</a>
+  - <a href="#second-group-member" id="toc-second-group-member">Second group
+    member</a>
+- <a href="#modeling" id="toc-modeling">Modeling</a>
+- <a href="#comparison-of-the-four-models"
+  id="toc-comparison-of-the-four-models">Comparison of the four models</a>
+- <a href="#automation" id="toc-automation">Automation</a>
+
+**DATA_CHANNEL_IS_SOCMED ’s Analysis**
 
 # Introduction
 
@@ -40,7 +56,6 @@ library(caret)
 library(Metrics)
 library(ggplot2)
 library(readr)
-library(corrplot)
 library(knitr)
 library(rsample)
 library(randomForest)
@@ -54,15 +69,14 @@ library(haven)
 ``` r
 ## Read and get an overview of the data
 newsdata <- read_csv("OnlineNewsPopularity.csv")
-#newsdata <- read_csv("C:\\Users\\zyang\\Desktop\\OnlineNewsPopularity\\OnlineNewsPopularity.csv")
 head(newsdata)
 
 ## Subset the data by the channels, and select our desired features
 newsdata <- newsdata %>% 
         filter(!!rlang::sym(params$chan) == 1) %>%
-        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares)#,data_channel_is_entertainment,data_channel_is_world) 
+        select(n_tokens_content,num_hrefs,num_imgs, num_videos,weekday_is_monday,weekday_is_saturday,is_weekend,global_rate_positive_words,global_rate_negative_words,avg_positive_polarity,avg_negative_polarity,shares)
         
-## Coerce the categorical variables into factor
+## Coerce the categorical variables into factors
 newsdata$weekday_is_monday <- factor(newsdata$weekday_is_monday, levels = c(0,1), labels = c('Not Monday', 'It is Monday'))
 
 newsdata$weekday_is_saturday <- factor(newsdata$weekday_is_saturday, levels = c(0,1), labels = c('Not Saturday', 'It is Saturday'))
@@ -73,9 +87,9 @@ newsdata$is_weekend <- factor(newsdata$is_weekend, levels = c(0,1), labels = c('
 print(newsdata, width = 100, n = 10)
 ```
 
-# First group member’s summarizations
+# Summarizations
 
-<br>
+## First group member
 
 #### <u>1) Numerical summaries</u>
 
@@ -135,7 +149,7 @@ g + geom_point(color = 'blue')+
   labs(title = 'Rate of positive words vs Number of shares')
 ```
 
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
 
 A scatter plot is used to visualize the relation between two numeric
 variables. A strong positive relationship between the rate of positive
@@ -155,7 +169,7 @@ g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
   labs(title = 'Density plot  of the rate of negative words in the article')
 ```
 
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 A density plot can tell us about the distribution of a certain feature
 or the whole data. Here, we plot the density of the rate of negative
@@ -175,7 +189,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
 
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 - Similarly to a boxplot, dotplots can be used to visualize the five
   number summary of a numeric data. Here , we are trying to see
@@ -190,12 +204,108 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
 
 - Points that are far away from the rest indicates possible outliers.
 
-# First group member’s modeling
+## Second group member
+
+#### <u>3) Numerical summaries</u>
+
+``` r
+# Create contingency table of whether the article was published on the weekend
+table(newsdata$is_weekend)
+```
+
+    ## 
+    ## Not a weekend       Weekend 
+    ##          2006           317
+
+***Comments:*** Based on the contingency table, we can see how many
+articles are published on weekend. 0 means articles are not published on
+weekend. 1 means articles are published on weekend.
+
+``` r
+# Create contingency table of whether the article was published on the Saturday
+table(newsdata$weekday_is_saturday)
+```
+
+    ## 
+    ##   Not Saturday It is Saturday 
+    ##           2143            180
+
+***Comments:*** Based on the contingency table, we can see how many
+articles are published on Saturday. 0 means articles are not published
+on Saturday. 1 means articles are published on Saturday.
+
+<br>
+
+#### <u>4) Graphs</u>
+
+- **Barplot of the day the article was published**
+
+``` r
+# Create bar plot to see whether the article was published on the Saturday
+
+ggplot(newsdata, aes(x=weekday_is_saturday))+
+  geom_bar(aes(fill = "drv")) + 
+  labs(y="Number of the Articles Were Published on the Saturday", 
+       title= "Weekend published article's Bar plot")
+```
+
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+***Comments:*** Based on the bar plot, we can see how many articles are
+published on Saturday.
+
+- **Histogram of the number of shares vs the amount of articles
+  published in the weekend**
+
+``` r
+# Create histogram to see number of shares and whether the article was published on the Weekend
+
+ggplot(data = newsdata, aes(x = shares))+ 
+  geom_histogram(bins = 20, aes(fill = is_weekend)) +
+  labs(x = "Number of Shares",
+       y="Number of the Articles Were Published on the Weekend", 
+       title = "Histogram of Shares that are Related to Weekend") +
+       scale_fill_discrete(name = "Whether Weekend Published", 
+                           labels = c("No", "Yes"))
+```
+
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+
+***Comments:*** Based on this histogram, we can see the distribution of
+the number of shares. If the peak of the graph lies to the left side of
+the center, it means that most of articles have small number of shares.
+If the peak of the graph lies to the right side of the center, it means
+that most of articles have large number of shares. If we see a bell
+shape, it means that the number of articles have large number of shares
+is similar with the number of articles have small number of shares. The
+No means the articles were published on weekend. The Yes means the
+articles were published on weekend.
+
+- **Scatter plot of the number of tokens content and the number of
+  shares**
+
+``` r
+g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
+g + geom_point(color = 'green')+
+  labs(title = 'number of tokens content vs Number of shares')
+```
+
+![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+
+***Comments:*** Based on this scatter plot, we can see how many points
+plotted in the Cartesian plane. Each point represents the values of
+number of shares and number of token content. The closer the data points
+come to forming a straight line when plotted, it means that number of
+shares and number of token content have stronger the relationship. If
+the data points make a straight line going from near the origin out to
+high y-values, variables will have a positive correlation.
+
+# Modeling
 
 Here the data will be split into two, a training set and a testing set.
-Two different models will be fit on the training set , then later be
-evaluated on the test set. The two models that will be fit are a
-**linear regression model** and a **random forest model**, using
+Four different models will be fit on the training set , then later be
+evaluated on the test set. The four models that will be fit are a
+**linear regression model** ,a **polynomial regression model** ,a
+**random forest model**, and a **boosted tree model** using
 cross-validation.
 
 - **What is linear regression about ?**
@@ -331,90 +441,9 @@ forest.tuned <-  train(shares ~ . ,
                    tuneGrid = expand.grid(mtry = mtry.opt))
 ```
 
-# Second group member’s summarizations
+#### <u>**3) Fit a polynomial linear regression model**</u>
 
-``` r
-# Create contingency table of whether the article was published on the weekend
-table(newsdata$is_weekend)
-```
-
-    ## 
-    ## Not a weekend       Weekend 
-    ##          2006           317
-
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on weekend. 0 means articles are not published on
-weekend. 1 means articles are published on weekend.
-
-``` r
-# Create contingency table of whether the article was published on the Saturday
-table(newsdata$weekday_is_saturday)
-```
-
-    ## 
-    ##   Not Saturday It is Saturday 
-    ##           2143            180
-
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on Saturday. 0 means articles are not published
-on Saturday. 1 means articles are published on Saturday.
-
-``` r
-# Create bar plot to see whether the article was published on the Saturday
-
-ggplot(newsdata, aes(x=weekday_is_saturday))+
-  geom_bar(aes(fill = "drv")) + 
-  labs(y="Number of the Articles Were Published on the Saturday", 
-       title= "Weekend published article's Bar plot")
-```
-
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
-***Comments:*** Based on the bar plot, we can see how many articles are
-published on Saturday.
-
-``` r
-# Create histogram to see number of shares and whether the article was published on the Weekend
-
-ggplot(data = newsdata, aes(x = shares))+ 
-  geom_histogram(bins = 20, aes(fill = is_weekend)) +
-  labs(x = "Number of Shares",
-       y="Number of the Articles Were Published on the Weekend", 
-       title = "Histogram of Shares that are Related to Weekend") +
-       scale_fill_discrete(name = "Whether Weekend Published", 
-                           labels = c("No", "Yes"))
-```
-
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
-
-***Comments:*** Based on this histogram, we can see the distribution of
-the number of shares. If the peak of the graph lies to the left side of
-the center, it means that most of articles have small number of shares.
-If the peak of the graph lies to the right side of the center, it means
-that most of articles have large number of shares. If we see a bell
-shape, it means that the number of articles have large number of shares
-is similar with the number of articles have small number of shares. The
-No means the articles were published on weekend. The Yes means the
-articles were published on weekend.
-
-``` r
-g <- ggplot(newsdata, aes(x = n_tokens_content, y = shares))
-g + geom_point(color = 'green')+
-  labs(title = 'number of tokens content vs Number of shares')
-```
-
-![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
-
-***Comments:*** Based on this scatter plot, we can see how many points
-plotted in the Cartesian plane. Each point represents the values of
-number of shares and number of token content. The closer the data points
-come to forming a straight line when plotted, it means that number of
-shares and number of token content have stronger the relationship. If
-the data points make a straight line going from near the origin out to
-high y-values, variables will have a positive correlation.
-
-# Second group member’s modeling
-
-#### <u>Fit another linear regression model</u>
+We will fit a polynomial regression model to the train set.
 
 ``` r
 regmod2 <- train(shares~(n_tokens_content+num_hrefs+num_imgs+num_videos+global_rate_positive_words+
@@ -487,7 +516,9 @@ summary(regmod2)
     ## Multiple R-squared:  0.04492,    Adjusted R-squared:  0.02143 
     ## F-statistic: 1.913 on 39 and 1586 DF,  p-value: 0.0006475
 
-#### What is a boosted tree model?
+#### <u>**4) Fit a boosted tree model**</u>
+
+- **What is a boosted tree model**?
 
 The boosted tree model is a general approach that can be applied to
 trees. Trees grown sequentially and each subsequent tree is grown on a
@@ -501,8 +532,6 @@ initialize predictions as 0, and Find the residuals
 with splits (terminal nodes) treating the residuals as the response,
 which they are for the first fit. After that, we can update predictions
 and update residuals for new predictions and repeat B times.
-
-#### <u>Fit a boosted tree model</u>
 
 ``` r
 boosted_fit <- train(shares ~., data = train.set, method = "gbm",
@@ -585,10 +614,10 @@ forest.pred <- predict(forest.tuned, newdata = test.set)
 ## Get the RMSE of the Random Forest model
 forest.rmse <- postResample(forest.pred, test.set$shares)[1]
 
-## Predict the second linear regression model on the test set
+## Predict the polynomial linear regression model on the test set
 regmod2.pred <- predict(regmod2, newdata = test.set)
 
-## Get the RMSE of the second linear regression model
+## Get the RMSE of the polynomial linear regression model
 regmod2.rmse <- postResample(regmod2.pred, test.set$shares)[1]
 
 ## Predict the boosted tree model on the test set
@@ -598,10 +627,12 @@ boosted.pred <- predict(boosted_fit, newdata = test.set)
 boosted.rmse <- postResample(boosted.pred, test.set$shares)[1]
 
 ## Combine the four RMSE in a table
-data.frame(Regression = regmod.rmse,
-           Forest = forest.rmse,
-           Pol.regression = regmod2.rmse,
-           Boosted.tree = boosted.rmse)
+k <- kable(data.frame(Regression = regmod.rmse,
+                      Random Forest = forest.rmse,
+                      Polynomial regression = regmod2.rmse,
+                      Boosted tree = boosted.rmse))
+k
+names(k)
 ```
 
 The **random forest** model has the lowest root mean squared error of
@@ -622,6 +653,7 @@ output_file <- paste0(channels,".md")
    return(list(chan = x))
 
 })
+ 
 ## Put into a data frame
 reports = tibble(channels, output_file, params);reports
 
