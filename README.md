@@ -5,16 +5,32 @@ Ruben Sowah, Zhiyuan Yang
 
 # Purpose of the repository
 
+This repository is created to complete the third project of a data
+science class (ST558). The goal of this project is to read in an [online
+news popularity data
+set](https://archive.ics.uci.edu/ml/datasets/Online+News+Popularity),
+perform variable selections, split the data into a train and test sets,
+fit some machine learning models(linear regression, random forest,
+boosted tree models) on the train set, predict the number of shares of
+the articles on the test set, and see which model performs the best. The
+comparison of the models as well as the whole project are automated
+across six different channels.
+
 # List of R Packages used
 
+The following packages are used in completing the project
+
+``` r
 tidyverse  
 caret  
 Metrics  
 ggplot2  
-readr  
+readr 
+tibble
 rsample  
 randomForest  
-rmarkdown
+rmarkdown  
+```
 
 # README render code
 
@@ -51,7 +67,7 @@ output_file <- paste0(channels,".md")
    return(list(chan = x))
 
 })
-## Put into a data frame
+## Put into a tibble
 reports = tibble(channels, output_file, params);reports
 ```
 
