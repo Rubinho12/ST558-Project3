@@ -57,7 +57,7 @@ apply(reports, MARGIN = 1, FUN = function(x){
 })
 ```
 
-# Reports  for each channel:   
+# Reports for each channel:   
 
 * [Entertainment channel analysis](data_channel_is_entertainment.md).  
 * [Lifestyle channel analysis](data_channel_is_lifestyle.md). 
