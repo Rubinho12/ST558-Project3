@@ -110,7 +110,7 @@ num.summary
 ## Get contingency tables of the categorical features
 
 # Count of the articles published and not on Monday
-table(newsdata$weekday_is_monday)
+tab1 <- table(newsdata$weekday_is_monday); tab1
 ```
 
     ## 
@@ -119,7 +119,7 @@ table(newsdata$weekday_is_monday)
 
 ``` r
 # Two ways table of articles published on weekend and on Saturday or neither.
-table(newsdata$is_weekend, newsdata$weekday_is_saturday)
+tab2 <- table(newsdata$is_weekend, newsdata$weekday_is_saturday); tab2
 ```
 
     ##                
@@ -128,17 +128,18 @@ table(newsdata$is_weekend, newsdata$weekday_is_saturday)
     ##   Weekend                137            180
 
 - From the numerical summaries, the results show that there is an
-  average of 607 words in the content, an average of 6 images and 3
-  videos. The standard deviation of the positive words from the mean is
-  0.0169 and the number of links varies by a average amount of 167.
+  average of 609.6280672 words in the content, an average of 4.2901421
+  images and 1.1175204 videos. The standard deviation of the positive
+  words from the mean is 0.0169597 and the number of links varies by a
+  average amount of 241.08742.
 
 - The one way contingency table tells us that the number of articles
-  published on Monday is less compared to the number of articles that is
-  not published on Monday, 1358 versus 5699.
+  published on Monday is 337 and the number of articles that is not
+  published on Monday is 1986.
 
-- From the two ways contingency tables, 536 articles are published
+- From the two ways contingency tables, 137 articles are published
   during the weekend, but it is not on Saturday. The amount of articles
-  published on Saturday is 380. A total number of 6141 articles are not
+  published on Saturday is 180. A total number of 2006 articles are not
   published during the weekend.
 
 #### <u>2) Graphs</u>
@@ -212,30 +213,41 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
 #### <u>3) Numerical summaries</u>
 
 ``` r
+## Quantitative summary
+summary <- newsdata %>%
+          summarize(tokens.med = median(n_tokens_content), image.sd = sd(num_imgs), pos.words.avg = mean(global_rate_positive_words))
+
+summary
+
 # Create contingency table of whether the article was published on the weekend
-table(newsdata$is_weekend)
+tab3 <- table(newsdata$is_weekend); tab3
 ```
 
     ## 
     ## Not a weekend       Weekend 
     ##          2006           317
 
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on weekend. 0 means articles are not published on
-weekend. 1 means articles are published on weekend.
+***Comments:***
+
+The tokens have a median value of 434 , the number of images have a
+standard deviation of 8.201711, and the mean of the positive words is
+0.0466823.
+
+Based on the contingency table, we can see that 317 articles are
+published on weekend versus 2006 published during the week days.
 
 ``` r
 # Create contingency table of whether the article was published on the Saturday
-table(newsdata$weekday_is_saturday)
+tab4 <- table(newsdata$weekday_is_saturday); tab4
 ```
 
     ## 
     ##   Not Saturday It is Saturday 
     ##           2143            180
 
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on Saturday. 0 means articles are not published
-on Saturday. 1 means articles are published on Saturday.
+***Comments:*** Based on the contingency table, we can see that 180
+articles are published on Saturday, and `r tab4[1]` articles are not
+published on Saturday.
 
 <br>
 
@@ -247,14 +259,16 @@ on Saturday. 1 means articles are published on Saturday.
 # Create bar plot to see whether the article was published on the Saturday
 
 ggplot(newsdata, aes(x=weekday_is_saturday))+
-  geom_bar(aes(fill = "drv")) + 
+  geom_bar(aes(fill = weekday_is_saturday)) + 
   labs(y="Number of the Articles Were Published on the Saturday", 
        title= "Weekend published article's Bar plot")
 ```
 
 ![](data_channel_is_socmed_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
-***Comments:*** Based on the bar plot, we can see how many articles are
-published on Saturday.
+***Comments:***  
+A higher bar indicates that articles are more published during this time
+period as opposed to a lower bar which indicates aricles are less
+published during this period.
 
 - **Histogram of the number of shares vs the amount of articles
   published in the weekend**

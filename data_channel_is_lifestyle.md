@@ -110,7 +110,7 @@ num.summary
 ## Get contingency tables of the categorical features
 
 # Count of the articles published and not on Monday
-table(newsdata$weekday_is_monday)
+tab1 <- table(newsdata$weekday_is_monday); tab1
 ```
 
     ## 
@@ -119,7 +119,7 @@ table(newsdata$weekday_is_monday)
 
 ``` r
 # Two ways table of articles published on weekend and on Saturday or neither.
-table(newsdata$is_weekend, newsdata$weekday_is_saturday)
+tab2 <- table(newsdata$is_weekend, newsdata$weekday_is_saturday); tab2
 ```
 
     ##                
@@ -128,17 +128,18 @@ table(newsdata$is_weekend, newsdata$weekday_is_saturday)
     ##   Weekend                210            182
 
 - From the numerical summaries, the results show that there is an
-  average of 607 words in the content, an average of 6 images and 3
-  videos. The standard deviation of the positive words from the mean is
-  0.0169 and the number of links varies by a average amount of 167.
+  average of 621.3272987 words in the content, an average of 4.9047165
+  images and 0.4749881 videos. The standard deviation of the positive
+  words from the mean is 0.0153022 and the number of links varies by a
+  average amount of 132.9537952.
 
 - The one way contingency table tells us that the number of articles
-  published on Monday is less compared to the number of articles that is
-  not published on Monday, 1358 versus 5699.
+  published on Monday is 322 and the number of articles that is not
+  published on Monday is 1777.
 
-- From the two ways contingency tables, 536 articles are published
+- From the two ways contingency tables, 210 articles are published
   during the weekend, but it is not on Saturday. The amount of articles
-  published on Saturday is 380. A total number of 6141 articles are not
+  published on Saturday is 182. A total number of 1707 articles are not
   published during the weekend.
 
 #### <u>2) Graphs</u>
@@ -152,7 +153,7 @@ g + geom_point(color = 'blue')+
   labs(title = 'Rate of positive words vs Number of shares')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
 
 A scatter plot is used to visualize the relation between two numeric
 variables. A strong positive relationship between the rate of positive
@@ -172,7 +173,7 @@ g + geom_density(kernel ='gaussian', color = 'red', size = 2)+
   labs(title = 'Density plot  of the rate of negative words in the article')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
 
 A density plot can tell us about the distribution of a certain feature
 or the whole data. Here, we plot the density of the rate of negative
@@ -192,7 +193,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
 
 - Similarly to a boxplot, dotplots can be used to visualize the five
   number summary of a numeric data. Here , we are trying to see
@@ -212,30 +213,41 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
 #### <u>3) Numerical summaries</u>
 
 ``` r
+## Quantitative summary
+summary <- newsdata %>%
+          summarize(tokens.med = median(n_tokens_content), image.sd = sd(num_imgs), pos.words.avg = mean(global_rate_positive_words))
+
+summary
+
 # Create contingency table of whether the article was published on the weekend
-table(newsdata$is_weekend)
+tab3 <- table(newsdata$is_weekend); tab3
 ```
 
     ## 
     ## Not a weekend       Weekend 
     ##          1707           392
 
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on weekend. 0 means articles are not published on
-weekend. 1 means articles are published on weekend.
+***Comments:***
+
+The tokens have a median value of 502 , the number of images have a
+standard deviation of 8.1506006, and the mean of the positive words is
+0.0443537.
+
+Based on the contingency table, we can see that 392 articles are
+published on weekend versus 1707 published during the week days.
 
 ``` r
 # Create contingency table of whether the article was published on the Saturday
-table(newsdata$weekday_is_saturday)
+tab4 <- table(newsdata$weekday_is_saturday); tab4
 ```
 
     ## 
     ##   Not Saturday It is Saturday 
     ##           1917            182
 
-***Comments:*** Based on the contingency table, we can see how many
-articles are published on Saturday. 0 means articles are not published
-on Saturday. 1 means articles are published on Saturday.
+***Comments:*** Based on the contingency table, we can see that 182
+articles are published on Saturday, and `r tab4[1]` articles are not
+published on Saturday.
 
 <br>
 
@@ -247,14 +259,16 @@ on Saturday. 1 means articles are published on Saturday.
 # Create bar plot to see whether the article was published on the Saturday
 
 ggplot(newsdata, aes(x=weekday_is_saturday))+
-  geom_bar(aes(fill = "drv")) + 
+  geom_bar(aes(fill = weekday_is_saturday)) + 
   labs(y="Number of the Articles Were Published on the Saturday", 
        title= "Weekend published article's Bar plot")
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
-***Comments:*** Based on the bar plot, we can see how many articles are
-published on Saturday.
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+***Comments:***  
+A higher bar indicates that articles are more published during this time
+period as opposed to a lower bar which indicates aricles are less
+published during this period.
 
 - **Histogram of the number of shares vs the amount of articles
   published in the weekend**
@@ -271,7 +285,7 @@ ggplot(data = newsdata, aes(x = shares))+
                            labels = c("No", "Yes"))
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
 
 ***Comments:*** Based on this histogram, we can see the distribution of
 the number of shares. If the peak of the graph lies to the left side of
@@ -292,7 +306,7 @@ g + geom_point(color = 'green')+
   labs(title = 'number of tokens content vs Number of shares')
 ```
 
-![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+![](data_channel_is_lifestyle_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
 
 ***Comments:*** Based on this scatter plot, we can see how many points
 plotted in the Cartesian plane. Each point represents the values of
