@@ -89,7 +89,7 @@ tab1 <- table(newsdata$weekday_is_monday); tab1
 tab2 <- table(newsdata$is_weekend, newsdata$weekday_is_saturday); tab2
 ```
 
-  * From the numerical summaries, the results show that there is an average of `r num.summary$tokens.avg` words in the content, an average of `r num.summary$image.avg` images and `r num.summary$vids.avg` videos. The standard deviation of the positive words from the mean is `r num.summary$pos.words.dev` and the number of links varies by a average amount of `r num.summary$links.var`.  
+  * From the numerical summaries, the results show that there is an average of `r round(num.summary$tokens.avg)` words in the content, an average of `r round(num.summary$image.avg)` images and `r round(num.summary$vids.avg)` videos. The standard deviation of the positive words from the mean is `r round(num.summary$pos.words.dev)` and the number of links varies by a average amount of `r round(num.summary$links.var)`.  
   
   * The one way contingency table tells us that the number of articles published on Monday is `r tab1[2]` and  the number of articles that is not published on Monday is `r tab1[1]`. 
   
@@ -127,7 +127,7 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
   labs(title = 'Dotplot of the number of articles shared vs the week of the day')
 ```
 
-  * Similarly to a boxplot, dotplots can be used to visualize the five number summary of a numeric data. Here , we are trying to see graphically the number of contents shared during the weekday and the weekend. We would expect the minimum number to be 0, since a the least amount of contents that can be shared can't go below 0.  
+  * Similarly to a boxplot, dotplots can be used to visualize the five number summary of a numeric data. Here , we are trying to see graphically the number of contents shared during the weekday and the weekend. We would expect the minimum number to be 0, since the least amount of contents to be shared can't go below 0.  
   
   * A greater number of points, for example in the 'Not weekend' group states that more articles are shared during  the week days compared the weekend. The opposite would mean that contents are shared more during the weekend.
   
@@ -149,7 +149,7 @@ tab3 <- table(newsdata$is_weekend); tab3
 ```
 ***Comments:***  
 
-The tokens have a median value of `r summary$tokens.med` , the number of images have a standard deviation of `r summary$image.sd`, and the mean of the positive words is `r summary$pos.words.avg`.  
+The tokens have a median value of `r round(summary$tokens.med)` , the number of images have a standard deviation of `r round(summary$image.sd)`, and the mean of the positive words is `r round(summary$pos.words.avg)`.  
 
 Based on the contingency table, we can see that `r tab3[2]` articles are published on weekend versus `r tab3[1]` published during the week days.
 
@@ -159,7 +159,7 @@ tab4 <- table(newsdata$weekday_is_saturday); tab4
 ```
 
 ***Comments:***
-Based on the contingency table, we can see that `r tab4[2]` articles are published on Saturday, and ` r tab4[1]` articles are not published on Saturday.
+Based on the contingency table, we can see that `r tab4[2]` articles are published on Saturday, and `r tab4[1]` articles are not published on Saturday.
 
 
 <br>
