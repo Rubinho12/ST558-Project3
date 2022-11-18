@@ -128,10 +128,9 @@ tab2 <- table(newsdata$is_weekend, newsdata$weekday_is_saturday); tab2
     ##   Weekend                536            380
 
 - From the numerical summaries, the results show that there is an
-  average of 607.4574182 words in the content, an average of 6.3176987
-  images and 2.545841 videos. The standard deviation of the positive
-  words from the mean is 0.0169277 and the number of links varies by a
-  average amount of 166.9442144.
+  average of 607 words in the content, an average of 6 images and 3
+  videos. The standard deviation of the positive words from the mean is
+  0 and the number of links varies by a average amount of 167.
 
 - The one way contingency table tells us that the number of articles
   published on Monday is 1358 and the number of articles that is not
@@ -198,8 +197,8 @@ g + geom_dotplot(binaxis = "y", stackdir = 'center', color = 'magenta', dotsize 
 - Similarly to a boxplot, dotplots can be used to visualize the five
   number summary of a numeric data. Here , we are trying to see
   graphically the number of contents shared during the weekday and the
-  weekend. We would expect the minimum number to be 0, since a the least
-  amount of contents that can be shared can’t go below 0.
+  weekend. We would expect the minimum number to be 0, since the least
+  amount of contents to be shared can’t go below 0.
 
 - A greater number of points, for example in the ‘Not weekend’ group
   states that more articles are shared during the week days compared the
@@ -230,8 +229,7 @@ tab3 <- table(newsdata$is_weekend); tab3
 ***Comments:***
 
 The tokens have a median value of 433 , the number of images have a
-standard deviation of 11.6270691, and the mean of the positive words is
-0.0404757.
+standard deviation of 12, and the mean of the positive words is 0.
 
 Based on the contingency table, we can see that 916 articles are
 published on weekend versus 6141 published during the week days.
@@ -246,8 +244,8 @@ tab4 <- table(newsdata$weekday_is_saturday); tab4
     ##           6677            380
 
 ***Comments:*** Based on the contingency table, we can see that 380
-articles are published on Saturday, and `r tab4[1]` articles are not
-published on Saturday.
+articles are published on Saturday, and 6677 articles are not published
+on Saturday.
 
 <br>
 
